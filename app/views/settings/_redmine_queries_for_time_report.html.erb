@@ -1,0 +1,5 @@
+<fieldset style="font-family:monospace; font-size:9px;">
+  <legend><h4>[<%= SmileTools.override_count(:redmine_queries_for_time_report) %>] override(s) added by the plugin (<%= SmileTools.override_last_date(:redmine_queries_for_time_report).to_s(:db) %>) :</h4></legend>
+
+  <%= SmileTools.override_traces(:redmine_queries_for_time_report).html_safe %>
+</fieldset>

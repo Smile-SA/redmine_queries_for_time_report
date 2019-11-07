@@ -1,0 +1,24 @@
+<%= render :partial => 'queries/query_form' %>
+
+<div class="tabs hide-when-print">
+<%
+  ################
+  # Smile specific #797962 Time Entry Report Queries
+  # Smile specific : query params different if time entries or time report
+  query_params = request.query_parameters
+  query_params_for_report = query_params
+  if action_name == 'index'
+    query_params_for_report = query_params_for_report.delete_if { |k, v| k == 'query_id' }
+  else
+    query_params = query_params.delete_if { |k, v| k == 'query_id' }
+  end
+  # END -- Smile specific #797962 Time Entry Report Queries
+  #######################
+-%>
+<ul>
+    <li><%= link_to(l(:label_details), _time_entries_path(@project, nil, :params => query_params),
+                                       :class => (action_name == 'index' ? 'selected' : nil)) %></li>
+    <li><%= link_to(l(:label_report), _report_time_entries_path(@project, nil, :params => query_params_for_report),
+                                       :class => (action_name == 'report' ? 'selected' : nil)) %></li>
+</ul>
+</div>

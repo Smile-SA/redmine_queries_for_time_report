@@ -1,0 +1,6 @@
+# English translations for Time Report Queries Plugin
+# by Jérôme BATAILLE (redmine-support@smile.fr)
+
+en:
+  label_criteria: Criteria
+  label_time_report_query_plural: Time entry Reports
