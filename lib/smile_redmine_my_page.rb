@@ -10,21 +10,33 @@ module Smile
       # 1/ Query4TimeReport
       module Query4TimeReport
         def self.prepended(base)
-          relay_role_instance_methods = [
+          my_page_queries = [
+            'timelog',
+            '+timelogquery',
+            '+timereportquery'
           ]
 
-          Redmine
-          # Smile specific : why private ? because Fetcher is a class ?
-          smile_instance_methods = base.private_instance_methods.select{|m|
-              base.instance_method(m).owner == self
+          core_blocks = Redmine::MyPage::CORE_BLOCKS
+
+          # Changes label : label_spent_time -> label_time_by_activity
+          core_blocks['timelog'][:label] = :label_time_by_activity
+
+          core_blocks['timelogquery'] = {
+              :label => :label_time_entry_plural,
+              :max_occurs => 3
             }
 
-          trace_first_prefix = "RM::Fetcher instance_methods  "
+          core_blocks['timereportquery'] = {
+              :label => :label_time_report_query_plural,
+              :max_occurs => 3
+            }
+
+          trace_first_prefix = "RM::MyPage           CORE_BLOCKS const  "
           trace_prefix       = "#{' ' * (base.name.length - 1)}               --->  "
           last_postfix       = '< (SM::RedmineOverride::MyPage::Query4TimeReport)'
 
           SmileTools::trace_by_line(
-            smile_instance_methods,
+            my_page_queries,
             trace_first_prefix,
             trace_prefix,
             last_postfix,
