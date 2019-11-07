@@ -21,15 +21,19 @@ module Smile
           # Changes label : label_spent_time -> label_time_by_activity
           core_blocks['timelog'][:label] = :label_time_by_activity
 
-          core_blocks['timelogquery'] = {
-              :label => :label_time_entry_plural,
-              :max_occurs => 3
-            }
+          unless core_blocks.key?('timelogquery')
+            core_blocks['timelogquery'] = {
+                :label => :label_time_entry_plural,
+                :max_occurs => 3
+              }
+          end
 
-          core_blocks['timereportquery'] = {
-              :label => :label_time_report_query_plural,
-              :max_occurs => 3
-            }
+          unless core_blocks.key?('timereportquery')
+            core_blocks['timereportquery'] = {
+                :label => :label_time_report_query_plural,
+                :max_occurs => 3
+              }
+          end
 
           trace_first_prefix = "RM::MyPage           CORE_BLOCKS const  "
           trace_prefix       = "#{' ' * (base.name.length - 1)}               --->  "
