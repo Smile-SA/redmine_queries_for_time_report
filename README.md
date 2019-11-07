@@ -3,9 +3,9 @@ redmine_queries_for_time_report
 
 Redmine plugin that adds Queries to **Time Report** like **Time Entry Queries**,
 
-  It allows to add such saved queries to **My Page**
+&nbsp;&nbsp;It allows to add such saved queries to **My Page**
 
-  Be careful, because of the nature of Time Report, records count will **not be limited** to 10, unlike other My Page Blocks.
+&nbsp;&nbsp;Be careful, because of the nature of Time Report, records count will **not be limited** to 10, unlike other My Page Blocks.
 
 It also allows to add Time Entry queries to **My Page**
 
