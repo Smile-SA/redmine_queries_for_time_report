@@ -88,6 +88,7 @@ rails_dispatcher.to_prepare do
   # but with primary loaded source code
   required = [
     # lib/
+    '/lib/smile_redmine_my_page',
 
     # lib/controllers
     '/lib/controllers/smile_controllers_timelog',
@@ -114,7 +115,7 @@ rails_dispatcher.to_prepare do
 
 #    ActiveSupport::Dependencies.autoload_once_paths.reject!{|x| x =~ /^#{Regexp.escape(plugin_root)}/}
 
-    autoload_plugin_paths = ['/lib/controllers', '/lib/helpers', '/lib/models']
+    autoload_plugin_paths = ['/lib/controllers', '/lib/helpers'] # '/lib/models'
 
     Rails.logger.debug 'o=>'
     Rails.logger.debug "o=>autoload_paths / watchable_dirs +="
@@ -139,6 +140,9 @@ rails_dispatcher.to_prepare do
 
   ##############
   # 6/ Overrides
+  prepend_in(Redmine::MyPage,
+      Smile::RedmineOverride::MyPage::Query4TimeReport
+    )
 
   #***************************
   # **** 6.1/ Controllers ****
