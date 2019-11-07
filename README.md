@@ -7,13 +7,15 @@ It allows to add such saved queries to **My Page**
 
 Be careful, because of the nature of Time Report, records count will **not be limited** to 10, unlike other My Page Blocks.
 
+It also allows to add Time Entry queries to **My Page**
+
 # How it works
 
 ## What it does
 
-* Adds : ****
+* Adds : specific configurations in the **Report tab** of the Timelog page
 
-Blah.
+To be able to configure and save Time Report Queries
 
 * Tested with **Redmine V4.0.3**
 
