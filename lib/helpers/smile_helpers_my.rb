@@ -29,9 +29,10 @@ module Smile
 
                 entries = scope.limit(10).to_a
 
-                render :partial => 'my/blocks/timelogs', :locals => {:query => query, :scope => scope, :entries => entries, :block => block, :settings => settings}
+                render :partial => 'my/blocks/partials/timelogs', :locals => {:query => query, :scope => scope, :entries => entries, :block => block, :settings => settings}
               else
-                render :partial => 'my/blocks/timelog_query_selection', :locals => {:queries => queries, :block => block, :settings => settings}
+                queries = TimeEntryQuery.visible.sorted
+                render :partial => 'my/blocks/partials/timelog_query_selection', :locals => {:queries => queries, :block => block, :settings => settings}
               end
             end
 
@@ -52,9 +53,10 @@ module Smile
                 # TODO override with alias_method in redmine_smile plugin
                 # prepare_budget_and_remaining_enabled
 
-                render :partial => 'my/blocks/timereport', :locals => {:query => @query, :scope => @scope, :block => block, :settings => settings}
+                render :partial => 'my/blocks/partials/timereport', :locals => {:query => @query, :scope => @scope, :block => block, :settings => settings}
               else
-                render :partial => 'my/blocks/timereport_query_selection', :locals => {:block => block, :settings => settings}
+                queries = TimeReportQuery.visible.sorted
+                render :partial => 'my/blocks/partials/timereport_query_selection', :locals => {:queries => queries, :block => block, :settings => settings}
               end
             end
           end
