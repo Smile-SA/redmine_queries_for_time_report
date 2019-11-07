@@ -6,7 +6,8 @@ module Smile
       module Query4TimeReport
         def self.prepended(base)
           time_report_queries_instance_methods = [
-            :render_timereportquery_block, # 1/ New RM 4.0.0 OK
+            :render_timelogquery_block,    # 1/ New RM 4.0.0 OK
+            :render_timereportquery_block, # 2/ New RM 4.0.0 OK
           ]
 
           # Smile specific : EXTENDED
@@ -14,9 +15,28 @@ module Smile
           # Smile comment : but no more access to rewritten methods => use of alias method to access to ancestor version
           base.module_eval do
             # New method
+            def render_timelogquery_block(block, settings)
+              query = TimeEntryQuery.visible.find_by_id(settings[:query_id])
+
+              if query
+                query.column_names = settings[:columns] if settings[:columns].present?
+                query.sort_criteria = settings[:sort] if settings[:sort].present?
+
+                scope = query.results_scope
+                scope = scope.
+                  preload(:issue => [:project, :tracker, :status, :assigned_to, :priority]).
+                  preload(:project, :user)
+
+                entries = scope.limit(10).to_a
+
+                render :partial => 'my/blocks/timelogs', :locals => {:query => query, :scope => scope, :entries => entries, :block => block, :settings => settings}
+              else
+                render :partial => 'my/blocks/timelog_query_selection', :locals => {:queries => queries, :block => block, :settings => settings}
+              end
+            end
+
+            # New method
             def render_timereportquery_block(block, settings)
-              logger.debug "==>prof render_timereportquery_block"
-              byebug
               @query = TimeReportQuery.visible.find_by_id(settings[:query_id])
 
               if @query
@@ -34,8 +54,7 @@ module Smile
 
                 render :partial => 'my/blocks/timereport', :locals => {:query => @query, :scope => @scope, :block => block, :settings => settings}
               else
-                queries = TimeReportQuery.visible.sorted
-                render :partial => 'my/blocks/timereport_query_selection', :locals => {:queries => queries, :block => block, :settings => settings}
+                render :partial => 'my/blocks/timereport_query_selection', :locals => {:block => block, :settings => settings}
               end
             end
           end
