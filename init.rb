@@ -98,6 +98,7 @@ rails_dispatcher.to_prepare do
     '/lib/helpers/smile_helpers_my',
 
     # lib/models
+    '/lib/models/smile_models_query',
   ]
 
   if Rails.env == "development"
@@ -115,7 +116,7 @@ rails_dispatcher.to_prepare do
 
 #    ActiveSupport::Dependencies.autoload_once_paths.reject!{|x| x =~ /^#{Regexp.escape(plugin_root)}/}
 
-    autoload_plugin_paths = ['/lib/controllers', '/lib/helpers'] # '/lib/models'
+    autoload_plugin_paths = ['/lib/controllers', '/lib/helpers', '/lib/models']
 
     Rails.logger.debug 'o=>'
     Rails.logger.debug "o=>autoload_paths / watchable_dirs +="
@@ -158,7 +159,8 @@ rails_dispatcher.to_prepare do
 
   #**********************
   # **** 6.3/ Models ****
-  #Rails.logger.info "o=>----- MODELS"
+  Rails.logger.info "o=>----- MODELS"
+  prepend_in(Query, Smile::Models::QueryOverride::Query4TimeReport)
 
 
   # keep traces if classes / modules are reloaded
