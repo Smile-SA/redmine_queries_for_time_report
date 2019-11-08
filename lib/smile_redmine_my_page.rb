@@ -3,6 +3,8 @@
 # 1/ module Query4TimeReport
 # - #784714: V4.0.0 : My page Time Entry queries
 
+require_dependency 'redmine/my_page'
+
 module Smile
   module RedmineOverride
     module MyPage
@@ -21,7 +23,9 @@ module Smile
             # 1/ Smile specific : REWRITTEN
             #
             # Returns the additional blocks that are defined by plugin partials
-            def self.additional_blocks
+            def self.additional_blocks_with_time_report_query
+              Rails.logger.debug "==>prof additional_blocks_with_time_report_query"
+
               @@additional_blocks ||= Dir.glob("#{Redmine::Plugin.directory}/*/app/views/my/blocks/_*.{rhtml,erb}").inject({}) do |h,file|
                 name = File.basename(file).split('.').first.gsub(/^_/, '')
 
@@ -32,11 +36,11 @@ module Smile
                   name.end_with?('_query_selection') ||
                   # Core blocks partials ignored : plugins overrides partial
                   (name == 'issues') ||
-                  CORE_BLOCKS.keys.include?(name)
+                  Redmine::MyPage::CORE_BLOCKS.keys.include?(name)
                 )
                   h[name] = {:label => name.to_sym, :partial => "my/blocks/#{name}"}
                 else
-                  Rails.logger.debug "==>prof additional_blocks #{name} partial overriden by plugin"
+                  Rails.logger.debug "==>prof additional_blocks_with_time_report_query #{name} partial overriden by plugin"
                 end
 
                 h
@@ -44,8 +48,20 @@ module Smile
             end
           end
 
-          trace_prefix    = "#{' ' * (base.name.length + 27)}  --->  "
+
+          trace_prefix    = "#{' ' * (base.name.length + 10)}  --->  "
           last_postfix    = '< (SM::RedmineOverride::MyPage::Query4TimeReport::CMeths)'
+
+          SmileTools.trace_override "#{base.name}           alias_method  additional_blocks, :time_report_query " + last_postfix,
+            true,
+            :redmine_queries_for_time_report
+
+          base.class_eval do
+            class << self
+              alias_method :additional_blocks_without_time_report_query, :additional_blocks
+              alias_method :additional_blocks, :additional_blocks_with_time_report_query
+            end
+          end
 
           smile_class_methods = base.methods.select{|m|
               my_page_queries_class_methods.include?(m) &&
@@ -57,9 +73,9 @@ module Smile
           }
 
           if missing_class_methods.any?
-            trace_first_prefix = "RM::MyPage MISS                methods  "
+            trace_first_prefix = "Redmine::MyPage MISS           methods  "
           else
-            trace_first_prefix = "RM::MyPage                     methods  "
+            trace_first_prefix = "Redmine::MyPage                methods  "
           end
 
           SmileTools::trace_by_line(
@@ -105,7 +121,7 @@ module Smile
               }
           end
 
-          trace_first_prefix = "RM::MyPage           CORE_BLOCKS const  "
+          trace_first_prefix = "Redmine::MyPage      CORE_BLOCKS const  "
           trace_prefix       = "#{' ' * (base.name.length - 1)}               --->  "
           last_postfix       = '< (SM::RedmineOverride::MyPage::Query4TimeReport)'
 
