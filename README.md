@@ -31,17 +31,21 @@ It also allows to add Time Entry queries to **My Page**
     - /my/blocks/_documents.html.erb
     - /my/blocks/_issues.erb
     - /my/blocks/_news.html.erb
+    - /my/blocks/_timelog.html.erb
 
-  - To add the project to the query block title
+  - To add the project in the query block title
 
     - /my/blocks/_issue_query_selection.html.erb
 
-- Adds the following **views**
-    - /my/blocks/_timelog.html.erb
-    - /my/blocks/_timelog_query_selection.html.erb
-    - /my/blocks/_timelogs.erb
-    - /my/blocks/_timereport.html.erb
-    - /my/blocks/_timereport_query_selection.html.erb
+- Adds / Rewrites the following **My Page** block **views**
+
+    - /my/blocks/partials/_timelogs.html.erb
+    - /my/blocks/partials/_timereport.html.erb
+
+- Adds **My Page** block **views** helper partials
+
+    - /my/blocks/partials/_timelog_query_selection.html.erb
+    - /my/blocks/partials/_timereport_query_selection.html.erb
 
 - Adds new **TimeReportQuery** model
 
@@ -57,7 +61,10 @@ It also allows to add Time Entry queries to **My Page**
 
   - **time_entry_scope**
 
-- 🔑 Extends **Redmine::MyPage** to add values in the **CORE_BLOCKS** hash :
+- 🔑 Extends **Redmine::MyPage** to :
+
+  - Add new My Page blocks in the **CORE_BLOCKS** hash
+  - Override **additional_blocks** class method to manage partials overriden in plugins
 
 - No migration ! uses Single table inheritance Redmine model.
 
