@@ -12,8 +12,58 @@ module Smile
       # 1/ Query4TimeReport
       module Query4TimeReport
         def self.prepended(base)
+          trace_prefix    = "#{' ' * (base.name.length + 15)}  --->  "
+          last_postfix    = '< (SM::RedmineOverride::MyPage::Query4TimeReport::CMeths)'
+
+          #############################
+          # 1/ Augment CORE_BLOCKS hash
+          my_page_queries_new_blocks = [
+            'timelog',
+            '+timelogquery',
+            '+timereportquery'
+          ]
+
+          core_blocks = Redmine::MyPage::CORE_BLOCKS
+
+          # Changes label : label_spent_time -> label_time_by_activity
+          core_blocks['timelog'][:label] = :label_time_by_activity
+
+          unless core_blocks.key?('timelogquery')
+            core_blocks['timelogquery'] = {
+                :label => :label_time_entry_plural,
+                :max_occurs => 3
+              }
+          end
+
+          unless core_blocks.key?('timereportquery')
+            core_blocks['timereportquery'] = {
+                :label => :label_time_report_query_plural,
+                :max_occurs => 3
+              }
+          end
+
+          trace_first_prefix = "Redmine::MyPage      CORE_BLOCKS const  "
+          trace_prefix       = "#{' ' * (base.name.length - 1)}               --->  "
+          last_postfix       = '< (SM::RedmineOverride::MyPage::Query4TimeReport)'
+
+          SmileTools::trace_by_line(
+            my_page_queries_new_blocks,
+            trace_first_prefix,
+            trace_prefix,
+            last_postfix,
+            :redmine_queries_for_time_report
+          )
+
+          SmileTools::trace_by_line(
+            Redmine::MyPage::CORE_BLOCKS.keys,
+            trace_first_prefix,
+            trace_prefix,
+            last_postfix,
+            :redmine_queries_for_time_report
+          )
+
           ##################
-          # 1/ Class methods
+          # 2/ Class methods
           my_page_queries_class_methods = [
             :additional_blocks, # 1/ REWRITTEN,  RM V4.0.3 OK
           ]
@@ -24,9 +74,9 @@ module Smile
             #
             # Returns the additional blocks that are defined by plugin partials
             def self.additional_blocks_with_time_report_query
-              Rails.logger.debug "==>prof additional_blocks_with_time_report_query"
+              return @@additional_blocks if defined?(@@additional_blocks)
 
-              @@additional_blocks ||= Dir.glob("#{Redmine::Plugin.directory}/*/app/views/my/blocks/_*.{rhtml,erb}").inject({}) do |h,file|
+              @@additional_blocks = Dir.glob("#{Redmine::Plugin.directory}/*/app/views/my/blocks/_*.{rhtml,erb}").inject({}) do |h,file|
                 name = File.basename(file).split('.').first.gsub(/^_/, '')
 
                 ################
@@ -45,12 +95,15 @@ module Smile
 
                 h
               end
+
+              Rails.logger.debug "==>prof self.additional_blocks_with_time_report_query #{@@additional_blocks}"
+              @@additional_blocks
             end
+
+            # Call it to be sure to fill @@additional_blocks with overriden version
+            self.additional_blocks_with_time_report_query
           end
 
-
-          trace_prefix    = "#{' ' * (base.name.length + 10)}  --->  "
-          last_postfix    = '< (SM::RedmineOverride::MyPage::Query4TimeReport::CMeths)'
 
           SmileTools.trace_override "#{base.name}           alias_method  additional_blocks, :time_report_query " + last_postfix,
             true,
@@ -93,45 +146,6 @@ module Smile
           if missing_class_methods.any?
             raise trace_first_prefix + missing_class_methods.join(', ') + '  ' + last_postfix
           end
-
-          #############################
-          # 2/ Augment CORE_BLOCKS hash
-          my_page_queries_new_blocks = [
-            'timelog',
-            '+timelogquery',
-            '+timereportquery'
-          ]
-
-          core_blocks = Redmine::MyPage::CORE_BLOCKS
-
-          # Changes label : label_spent_time -> label_time_by_activity
-          core_blocks['timelog'][:label] = :label_time_by_activity
-
-          unless core_blocks.key?('timelogquery')
-            core_blocks['timelogquery'] = {
-                :label => :label_time_entry_plural,
-                :max_occurs => 3
-              }
-          end
-
-          unless core_blocks.key?('timereportquery')
-            core_blocks['timereportquery'] = {
-                :label => :label_time_report_query_plural,
-                :max_occurs => 3
-              }
-          end
-
-          trace_first_prefix = "Redmine::MyPage      CORE_BLOCKS const  "
-          trace_prefix       = "#{' ' * (base.name.length - 1)}               --->  "
-          last_postfix       = '< (SM::RedmineOverride::MyPage::Query4TimeReport)'
-
-          SmileTools::trace_by_line(
-            my_page_queries_new_blocks,
-            trace_first_prefix,
-            trace_prefix,
-            last_postfix,
-            :redmine_queries_for_time_report
-          )
         end # def self.prepended
       end # module Query4TimeReport
     end # module MyPage
