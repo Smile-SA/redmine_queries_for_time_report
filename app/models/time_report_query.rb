@@ -127,6 +127,27 @@ class TimeReportQuery < Query
     [['spent_on', 'desc']]
   end
 
+
+  def criteria
+    r = options[:criteria]
+    r ||= []
+  end
+
+  def criteria=(arg)
+    options[:criteria] = arg
+  end
+
+  def period
+    r = options[:period]
+    r = 'month' if r.blank?
+    r
+  end
+
+  def period=(arg)
+    options[:period] = arg
+  end
+
+
   # If a filter against a single issue is set, returns its id, otherwise nil.
   def filtered_issue_id
     if value_for('issue_id').to_s =~ /\A(\d+)\z/
