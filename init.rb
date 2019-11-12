@@ -141,9 +141,8 @@ rails_dispatcher.to_prepare do
 
   ##############
   # 6/ Overrides
-  prepend_in(Redmine::MyPage,
-      Smile::RedmineOverride::MyPage::Query4TimeReport
-    )
+  require_dependency 'lib/redmine/my_page'
+  prepend_in(Redmine::MyPage, Redmine::MyPage::Query4TimeReport)
 
   #***************************
   # **** 6.1/ Controllers ****
