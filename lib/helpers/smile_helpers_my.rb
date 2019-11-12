@@ -6,8 +6,9 @@ module Smile
       module Query4TimeReport
         def self.prepended(base)
           time_report_queries_instance_methods = [
-            :render_timelogquery_block,    # 1/ New RM 4.0.0 OK
-            :render_timereportquery_block, # 2/ New RM 4.0.0 OK
+            :render_timelogquery_block,    # 1/ New RM 4.0.3 OK
+            :render_timereportquery_block, # 2/ New RM 4.0.3 OK
+            :prepare_report_object_hook,   # 3/ New RM 4.0.3 OK
           ]
 
           # Smile specific : EXTENDED
@@ -17,7 +18,7 @@ module Smile
             # Smile specific #784714: V4.0.0 : My page Time Entry queries
             include TimelogHelper
 
-            # New method
+            # 1/ New method RM 4.0.3 OK
             def render_timelogquery_block(block, settings)
               query = TimeEntryQuery.visible.find_by_id(settings[:query_id])
 
@@ -39,7 +40,7 @@ module Smile
               end
             end
 
-            # New method
+            # 2/ New method RM 4.0.3 OK
             def render_timereportquery_block(block, settings)
               @query = TimeReportQuery.visible.find_by_id(settings[:query_id])
 
@@ -51,10 +52,7 @@ module Smile
                 # Smile comment : no limit to scope
                 prepare_report_object
 
-                ################
-                # Smile specific #994 Budget and Remaining enhancement
-                # TODO override with alias_method in redmine_smile plugin
-                # prepare_budget_and_remaining_enabled
+                prepare_report_object_hook
 
                 render :partial => 'my/blocks/partials/timereport', :locals => {:query => @query, :scope => @scope, :block => block, :settings => settings}
               else
@@ -62,9 +60,15 @@ module Smile
                 render :partial => 'my/blocks/partials/timereport_query_selection', :locals => {:queries => queries, :block => block, :settings => settings}
               end
             end
+
+            # 3/ New method RM 4.0.3 OK
+            # To override with alias_method in the plugins
+            def prepare_report_object_hook
+              # Nothing in base method
+            end
           end
 
-          trace_prefix       = "#{' ' * (base.name.length + 19)}  --->  "
+          trace_prefix       = "#{' ' * (base.name.length + 24)}  --->  "
           last_postfix       = '< (SM::HO::MyOverride::Query4TimeReport)'
 
           smile_instance_methods = base.instance_methods.select{|m|
