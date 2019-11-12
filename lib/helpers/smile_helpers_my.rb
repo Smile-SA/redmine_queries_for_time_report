@@ -14,6 +14,9 @@ module Smile
           # Smile comment : module_eval mandatory with helpers, that are included in classes without the module prepended sub-modules
           # Smile comment : but no more access to rewritten methods => use of alias method to access to ancestor version
           base.module_eval do
+            # Smile specific #784714: V4.0.0 : My page Time Entry queries
+            include TimelogHelper
+
             # New method
             def render_timelogquery_block(block, settings)
               query = TimeEntryQuery.visible.find_by_id(settings[:query_id])
