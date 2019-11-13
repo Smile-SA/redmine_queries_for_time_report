@@ -1,0 +1,25 @@
+<%
+  ################
+  # Smile specific #797962 Time Entry Report Queries
+  # Smile specific : Period and Criteria reminder
+-%>
+  <p>
+  <%= l(:label_details).capitalize %> : <b><%= period_label(@query) -%></b>&nbsp;&nbsp;&nbsp;&nbsp;
+<%
+    if @report.criteria.any?
+      criteria_reminder = @report.criteria.collect{|c| l_or_humanize(@report.available_criteria[c][:label]) }.join('&nbsp;&nbsp;/&nbsp;&nbsp;').html_safe
+-%>
+     <%= l(:label_criteria) %> : <b><%= criteria_reminder -%></b>&nbsp;&nbsp;&nbsp;&nbsp;
+<%
+      ###############
+      # Smile comment : NATIVE CODE
+-%>
+     <%= link_to l(:button_clear), {:params => request.query_parameters.merge(:criteria => nil)}, :class => 'icon icon-reload' %>
+<%
+    else
+-%>
+     <%= l(:label_criteria) %> : <b><%= l(:label_none).capitalize %></b>
+<%
+    end
+-%>
+  </p>
