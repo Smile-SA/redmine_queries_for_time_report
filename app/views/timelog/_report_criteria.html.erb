@@ -1,0 +1,73 @@
+<%
+  ################
+  # Smile specific
+  # RM V4.0.3 OK
+
+  # Smile comment : treat criteria recursively by their order
+-%>
+<%
+  ################
+  # Smile specific #408972 Optimisation : Rapport temps passé, cache criteria values
+  # Smile comment : current criteria values found in time entries
+  # Smile comment : UPSTREAM code
+  # criteria_values = @report.hours.collect {|h| h[criterias[level]].to_s}.uniq
+
+  criteria_values = @report.criteria_values(criterias[level])
+
+  current_criteria = @report.available_criteria[criterias[level]]
+
+  # END -- Smile specific #408972 Optimisation : Rapport temps passé, cache criteria values
+  #######################
+
+  ################
+  # Smile specific #408972 Optimisation : Rapport temps passé, cache criteria values
+  criteria_values.each do |value| %>
+<%
+    # Smile comment : one line by different criteria value for current criteria
+-%>
+<% hours_for_value = select_hours(hours, criterias[level], value) -%>
+<% next if hours_for_value.empty? -%>
+<tr class="<%= criterias.length > level+1 ? 'subtotal' : 'last-level' %>">
+<%
+    #---------------------------
+    # 1/ CRITERIA HEADER COLUMNS
+    #---------------------------
+-%>
+<%= ("<td></td>" * level).html_safe %>
+<%
+    ################
+    # Smile specific : Time Report Queries
+    # Smile specific : current_criteria variable
+-%>
+<td class="name"><%= format_criteria_value(current_criteria, value) %></td>
+<%= ("<td></td>" * (criterias.length - level - 1)).html_safe -%>
+<%
+    #------------------------------------
+    # 2/ **** HOURS **** for the criteria
+-%>
+  <% total = 0 -%>
+  <% @report.periods.each do |period| -%>
+<%
+    ################
+    # Smile specific : Time Report Queries
+    # Smile specific : @report.columns -> @query.period
+-%>
+    <% sum = sum_hours(select_hours(hours_for_value, @query.period, period.to_s)); total += sum -%>
+    <td class="hours"><%= html_hours(format_hours(sum)) if sum > 0 %></td>
+  <% end -%>
+<%
+    #---------------------------------
+    # 4.2/ **** HOURS for PERIOD *****
+-%>
+  <td class="hours"><%= html_hours(format_hours(total)) if total > 0 %></td>
+</tr>
+<% if criterias.length > level+1 -%>
+<%
+    ###############
+    # Smile specific : Time Report Queries
+    # Smile specific : partial prefixed by folder
+-%>
+  <%= render(:partial => 'timelog/report_criteria', :locals => {:criterias => criterias, :hours => hours_for_value, :level => (level + 1)}) %>
+<% end -%>
+
+<% end %>
