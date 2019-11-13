@@ -112,6 +112,56 @@ class TimeReportQuery < Query
     @available_columns
   end
 
+  # new method, RM 4.0.3 OK
+  # Smile specific #797962 Time Entry Report Queries
+  def available_criteria
+    @available_criteria ||= Redmine::Helpers::TimeReport.get_available_criteria(project)
+  end
+
+  # new method, RM 4.0.3 OK
+  # Smile specific #797962 Time Entry Report Queries
+  # Smile specific #245965 Rapport : critères, indication type champ personnalisé
+  # TODO move to redmine_smile_enhancements_plugin override
+  def available_criteria_options
+    return @available_criteria_options if defined?(@available_criteria_options)
+
+    ################
+    # Smile specific #245965 Rapport : critères, indication type champ personnalisé
+    # Smile specific : trier les critères affichables
+    @available_criteria_options = available_criteria.collect{|k, criteria|
+      cf_class = criteria[:custom_field].class
+
+      if (cf_class == TimeEntryCustomField) || (cf_class == TimeEntryActivityCustomField)
+        criteria_order = 'A' # in first
+        criteria_label = '<' + l(:label_custom_field) + '> ' + l_or_humanize(criteria[:label])
+      elsif cf_class == IssueCustomField
+        criteria_order = l(:label_issue)[0]
+        criteria_label = l("label_attribute_of_issue", :name => criteria[:label])
+      elsif cf_class == ProjectCustomField
+        criteria_order = l(:label_project)[0]
+        criteria_label = l("label_attribute_of_project", :name => criteria[:label])
+      else
+        criteria_order = nil
+        criteria_label = l_or_humanize(criteria[:label])
+      end
+
+      # Smile comment : criteria_order added to sort later
+      [criteria_label, k, criteria_order]
+    }
+
+    ################
+    # Smile specific #245965 Rapport : critères, indication type champ personnalisé
+    self.class.sort_criteria_options!(@available_criteria_options)
+
+    # remove last element used to sort
+    @available_criteria_options = @available_criteria_options.collect{|k| [k[0], k[1]]}
+    # END -- Smile specific : trier les critères affichables
+    # END -- Smile specific #245965 Rapport : critères, indication type champ personnalisé
+    #######################
+
+    @available_criteria_options
+  end
+
   def default_columns_names
     @default_columns_names ||= begin
       default_columns = Setting.time_entry_list_defaults.symbolize_keys[:column_names].map(&:to_sym)
@@ -170,6 +220,34 @@ class TimeReportQuery < Query
     base_scope.
       order(order_option).
       joins(joins_for_order_statement(order_option.join(',')))
+  end
+
+  # new method, RM 4.0.3 OK
+  # Smile specific #245965 Rapport : critères, indication type champ personnalisé
+  def self.sort_criteria_options!(criteria_options)
+    criteria_options.sort!{|x, y|
+      criteria_order_x = x[2]
+      criteria_order_y = y[2]
+
+      if criteria_order_x && criteria_order_y
+        # 2 Custom field criteria
+        if criteria_order_x == criteria_order_y
+          # Same Custom field
+          x[0] <=> y[0]
+        else
+          criteria_order_x <=> criteria_order_y
+        end
+      elsif criteria_order_x
+        # first Custom field criteria => first at the end
+        1
+      elsif criteria_order_y
+        # second Custom field criteria => at the begining
+        -1
+      else
+        # normal order
+        x[0] <=> y[0]
+      end
+    }
   end
 
   # Returns sum of all the spent hours
@@ -251,6 +329,15 @@ class TimeReportQuery < Query
     elsif params[:to].present?
       add_filter('spent_on', '<=', [params[:to]])
     end
+
+    ################
+    # Smile specific : criteria
+    self.criteria = params[:criteria] || (params[:query] && params[:query][:criteria])
+
+    ################
+    # Smile specific : period
+    self.period = params[:period] || (params[:query] && params[:query][:period])
+
     self
   end
 
