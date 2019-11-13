@@ -64,7 +64,7 @@
     ################
     # Smile specific #47664 Rendre la case "sans les sous-tâches" optionnelle
     # Smile specific : NEW DEBUG
-    if @query.debug
+    if @query.respond_to?(:debug) && @query.debug
 -%>
         </tr>
           <td>Debug</td>
