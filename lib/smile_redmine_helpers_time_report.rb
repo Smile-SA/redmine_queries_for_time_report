@@ -18,6 +18,7 @@ module Smile
             # 1/ Instance methods
             new_criteria_instance_methods = [
               :load_available_criteria, # 1/ OVERRIDEN
+              :criteria_values,         # 2/ New method
             ]
 
             smile_instance_methods = base.instance_methods.select{|m|
@@ -85,6 +86,19 @@ module Smile
           def load_available_criteria
             @available_criteria = self.class.get_available_criteria(@project)
           end
+
+          # 2/ new method
+          # Smile specific : cached
+          def criteria_values(criteria_name)
+            @criteria_values ||= {}
+
+            return @criteria_values[criteria_name] if @criteria_values[criteria_name]
+
+            @criteria_values[criteria_name] = hours.collect {|h| h[criteria_name].to_s}.uniq
+
+            @criteria_values[criteria_name]
+          end
+
 
           module ClassMethods
             # 1/ new method, RM 4.0.0 OK
