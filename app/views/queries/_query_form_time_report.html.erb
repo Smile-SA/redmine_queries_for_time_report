@@ -1,0 +1,38 @@
+<%
+  # Smile specific :
+  # RM V4.0.3 OK
+  #
+  # ONLY for TIME REPORT QUERIES
+  # * #797962 Time Entry Report Queries
+-%>
+  <fieldset id="options_time_report" class="collapsible collapsed">
+    <legend onclick="toggleFieldset(this);"><%= l(:label_options) %> (<%= l(:label_report) %>)</legend>
+    <div style="display: none;">
+      <table>
+        <tr>
+          <td class="field"><%= l(:label_criteria) %> (<%= l(:label_max_criteria) %>)</td>
+          <td>
+            <%= render_query_criteria_selection(query) %>
+          </td>
+        </tr>
+
+        <tr>
+          <td class="field"><%= l(:label_details) %></td>
+          <td><%= render_period_selection(query) %></td>
+        </tr>
+<%
+      ################
+      # Smile specific : + debug
+      if query.debug
+-%>
+        <tr>
+          <td>
+            <%= check_box_tag 'debug', '1', query.debug %> Debug
+          </td>
+        </tr>
+<%
+      end
+-%>
+      </table>
+  </div>
+</fieldset>

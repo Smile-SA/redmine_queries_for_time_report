@@ -1,0 +1,136 @@
+<%
+  # Smile specific
+  # RM V4.0.0 OK
+  #
+  # * #797962 Time Entry Report Queries
+  # * #375235 Hook dans partiel querie/column
+-%>
+<% tag_id = tag_name.gsub(/[\[\]]+/, '_').sub(/_+$/, '') %>
+<% available_tag_id = "available_#{tag_id}" %>
+<% selected_tag_id = "selected_#{tag_id}" %>
+
+<span class="query-columns">
+  <span>
+      <%= label_tag available_tag_id, l(:description_available_columns) %>
+<%
+  ################
+  # Smile specific #245965 Rapport : critères, indication type champ personnalisé
+  # Smile specific : style width
+-%>
+      <%= select_tag 'available_criteria',
+              options_for_select(query_available_criteria_options(query)),
+              :id => available_tag_id,
+              :multiple => true, :size => 10, :style => "min-width:180px",
+              :ondblclick => "moveOptions(this.form.#{available_tag_id}, this.form.#{selected_tag_id});" %>
+  </span>
+  <span class="buttons">
+      <input type="button" value="&#8594;" id="add_selected" class="move-right"
+       onclick="addSelectedCriteriaWithMaximum(this.form.<%= available_tag_id %>, this.form.<%= selected_tag_id %>);" />
+      <input type="button" value="&#8592;" id="remove_selected" class="move-left"
+       onclick="removedSelectedCriteriaWithMaximum(this.form.<%= selected_tag_id %>, this.form.<%= available_tag_id %>);" />
+  </span>
+  <span>
+      <%= label_tag selected_tag_id, l(:description_selected_columns) %>
+      <%= select_tag tag_name,
+              options_for_select(query_selected_criteria_options(query)),
+              :id => selected_tag_id,
+              :multiple => true, :size => 5, :style => "min-width:180px",
+              :ondblclick => "moveOptions(this.form.#{selected_tag_id}, this.form.#{available_tag_id});" %>
+  </span>
+  <span class="buttons">
+      <input type="button" value="&#8648;" onclick="moveOptionTop(this.form.<%= selected_tag_id %>);" />
+      <input type="button" value="&#8593;" onclick="moveOptionUp(this.form.<%= selected_tag_id %>);" />
+      <input type="button" value="&#8595;" onclick="moveOptionDown(this.form.<%= selected_tag_id %>);" />
+      <input type="button" value="&#8650;" onclick="moveOptionBottom(this.form.<%= selected_tag_id %>);" />
+  </span>
+</span>
+<%
+  ################
+  # Smile specific #375235 Hook dans partiel querie/column
+-%>
+<span class="infos-bar">
+<%= call_hook :view_queries_colums_after_columns_selected, :project => @project %>
+</span>
+
+<%= javascript_tag do %>
+$(document).ready(function(){
+  toggleAddSelectedAgainstMaximum( getSelectedCriteriaSelect() );
+
+  $('.query-columns').closest('form').submit(function(){
+    $('#<%= selected_tag_id %> option').prop('selected', true);
+  });
+});
+
+var max_criteria = 4;
+function getAvailaibleCriteriaSelect(){
+  return $('#<%= available_tag_id %>');
+}
+
+function getSelectedCriteriaSelect(){
+  return $('#<%= selected_tag_id %>');
+}
+
+function getSelectedCriteriaCount(selected_criteria_select){
+  return selected_criteria_select.find('option').length;
+}
+
+function getSelectedAvailableCriteriaCount(available_criteria_select){
+  return available_criteria_select.find('option:selected').length;
+}
+
+function toggleAddSelectedAgainstMaximum(selected_criteria_select){
+  if ( getSelectedCriteriaCount(selected_criteria_select) >= max_criteria) {
+    $('#add_selected').hide();
+  } else {
+    $('#add_selected').show();
+  }
+}
+
+function unselectLastSelectedAvailableCriteria(available_criteria_select){
+  last_available_criteria_selected = available_criteria_select.find('option:selected').last();
+  last_available_criteria_selected.prop("selected", false);
+}
+
+function checkSelectedAvailableCriteriaMaximun(available_criteria_select, selected_criteria_select){
+  selected_available_criteria_count = getSelectedAvailableCriteriaCount(available_criteria_select);
+
+  selected_criteria_count = getSelectedCriteriaCount(selected_criteria_select);
+
+  max_criteria_to_add = Math.max(max_criteria - selected_criteria_count, 0);
+
+  if (selected_available_criteria_count <= max_criteria_to_add) {
+    return 0;
+  }
+
+  selected_available_criteria_to_remove = (selected_available_criteria_count - max_criteria_to_add)
+
+  for(var i = 0; i < selected_available_criteria_to_remove; i++) {
+    unselectLastSelectedAvailableCriteria(available_criteria_select);
+  }
+
+  return selected_available_criteria_to_remove;
+}
+
+function addSelectedCriteriaWithMaximum(available_select_id, selected_select_id){
+  var available_criteria_select = getAvailaibleCriteriaSelect();
+  var selected_criteria_select = getSelectedCriteriaSelect();
+
+  checkSelectedAvailableCriteriaMaximun(available_criteria_select, selected_criteria_select);
+
+  var selected_criteria_count = getSelectedCriteriaCount(selected_criteria_select);
+
+  if (selected_criteria_count <= 3){
+    moveOptions(available_select_id, selected_select_id);
+  }
+
+  toggleAddSelectedAgainstMaximum(selected_criteria_select);
+}
+
+function removedSelectedCriteriaWithMaximum(selected_select_id, available_select_id){
+  var selected_criteria_select = getSelectedCriteriaSelect();
+
+  moveOptions(selected_select_id, available_select_id);
+
+  toggleAddSelectedAgainstMaximum(selected_criteria_select);
+}
+<% end %>

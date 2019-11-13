@@ -1,0 +1,11 @@
+<%= select_tag 'period',
+      options_for_select(
+        [
+          [l(:label_year), 'year'],
+          [l(:label_month), 'month'],
+          [l(:label_week), 'week'],
+          [l(:label_day_plural).titleize, 'day']
+        ],
+        query.period
+      )
+-%>

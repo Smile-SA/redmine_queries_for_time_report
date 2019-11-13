@@ -1,0 +1,20 @@
+<%
+  ################
+  # Smile specific : ONLY for TIME REPORT QUERIES
+  # Smile specific #797962 Time Entry Report Queries
+-%>
+<%= content_tag 'fieldset', :id => 'criteria' do %>
+<legend><%= l(:label_criteria) %> (<%= l(:label_max_criteria) %>)</legend>
+<%= render_query_criteria_selection(query) %>
+<% end %>
+
+<div class="tabular">
+<%= content_tag 'fieldset', :id => 'time_report_options' do %>
+  <legend><%= l(:label_options) %> (<%= l(:label_report) %>)</legend>
+
+  <p id="p_details">
+    <label><%= l(:label_details) %></label>
+    <label class="inline"><%= render_period_selection(query) %></label>
+  </p>
+<% end %>
+</div>
