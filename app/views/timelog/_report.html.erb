@@ -1,0 +1,145 @@
+<%
+  # Smile specific :
+  # RM V4.0.3 OK
+  # * #797962 Time Entry Report Queries
+  #   2019
+  #
+  # * #793161 My page, add Time Entry report for user month imputations
+  #   2019
+-%>
+<% # Smile comment : LEVEL 1 %>
+<% if @query.valid? %>
+<% # Smile comment :   LEVEL 2 %>
+<% unless @report.criteria.empty? %>
+<%
+    ################
+    # Smile specific : UPSTREAM MISSING query totals
+-%>
+<%= render_query_totals(@query) %>
+
+<% # Smile comment :     LEVEL 3 %>
+<% if @report.hours.empty? %>
+<p class="nodata"><%= l(:label_no_data) %></p>
+<% else %>
+<div class="autoscroll">
+<table class="list" id="time-report">
+<thead>
+<tr>
+<%
+    #####################
+    #####################
+    # 1/ **** HEADER ****
+    #---------------------------------
+    # 1.1/ **** HEADER - CRITERIA ****
+-%>
+<% @report.criteria.each do |criteria| %>
+  <th><%= l_or_humanize(@report.available_criteria[criteria][:label]) %></th>
+<% end %>
+<% columns_width = (40 / (@report.periods.length+1)).to_i %>
+<% @report.periods.each do |period| %>
+  <th class="period" style="width:<%= columns_width %>%;"><%= period %></th>
+<% end %>
+<%
+      #------------------------------------
+      # 1.4/ **** HEADER - TOTAL HOURS ****
+-%>
+  <th class="total" style="width:<%= columns_width %>%;"><%= l(:label_total_time) %></th>
+<%
+      # END -- 1/ **** HEADER ****
+      ############################
+      ############################
+-%>
+</tr>
+</thead>
+<tbody>
+<%
+        ################
+        # Smile specific : Time Report Queries
+        # partial prefixed by folder
+-%>
+<%= render :partial => 'timelog/report_criteria', :locals => {:criterias => @report.criteria, :hours => @report.hours, :level => 0} %>
+<%
+      ##############################
+      ##############################
+      # 3/ **** FOOTER2, totals ****
+-%>
+  <tr class="total">
+  <td><%= l(:label_total_time) %></td>
+<%
+        #--------------------------------------------------------------
+        # 3.1/ **** FOOTER2 - columns for the CRITERIA (empty tds) ****
+-%>
+  <%= ('<td></td>' * (@report.criteria.size - 1)).html_safe %>
+  <% total = 0 -%>
+<%
+        #------------------------------------------------
+        # 3.2/ **** FOOTER2 - TOTAL HOURS for PERIOD ****
+-%>
+  <% @report.periods.each do |period| -%>
+<%
+        ################
+        # Smile specific : Time Report Queries
+        # @report.columns -> @query.period
+-%>
+    <% sum = sum_hours(select_hours(@report.hours, @query.period, period.to_s)); total += sum -%>
+    <td class="hours"><%= html_hours(format_hours(sum)) if sum > 0 %></td>
+<%
+        end # @report.periods.each do |period|
+
+        #--------------------------------------------
+        # 3.4/ **** FOOTER2 - TOTAL global HOURS ****
+-%>
+  <td class="hours"><%= html_hours(format_hours(total)) if total > 0 %></td>
+  </tr>
+<%
+      # END -- 3/ -- **** FOOTER2, totals ****
+      ########################################
+      ########################################
+-%>
+</tbody>
+</table>
+</div>
+
+<% other_formats_links do |f| %>
+  <%= f.link_to_with_query_parameters 'CSV', {}, :onclick => "showModal('csv-export-options', '330px'); return false;" %>
+<% end %>
+<% #     LEVEL 3 %>
+<% end %>
+<div id="csv-export-options" style="display: none;">
+  <h3 class="title"><%= l(:label_export_options, :export_format => 'CSV') %></h3>
+  <%= export_csv_encoding_select_tag %>
+  <p class="buttons">
+    <%= submit_tag l(:button_export), :name => nil, :id => 'csv-export-button' %>
+    <%= submit_tag l(:button_cancel), :name => nil, :onclick => 'hideModal(this);', :type => 'button' %>
+  </p>
+</div>
+<% #   LEVEL 2 %>
+<% end %>
+<% # LEVEL 1 %>
+<% end %>
+
+<%
+=begin
+  ################
+  # Smile specific : Time Report Queries
+-%>
+<% content_for :sidebar do %>
+  <%= render_sidebar_queries(TimeEntryQuery, @project) %>
+<% end %>
+
+<% html_title(@query.new_record? ? l(:label_spent_time) : @query.name, l(:label_report)) %>
+<%
+=begin
+-%>
+
+<% # TODO jebat duplicated ? %>
+<%= javascript_tag do %>
+$(document).ready(function(){
+  $('input#csv-export-button').click(function(){
+    $('form input#encoding').val($('select#encoding option:selected').val());
+    $('form#query_form').attr('action', '<%= _report_time_entries_path(@project, nil, :format => 'csv') %>').submit();
+    $('form#query_form').attr('action', '<%= _report_time_entries_path(@project, nil) %>');
+    hideModal(this);
+  });
+});
+<% end %>
