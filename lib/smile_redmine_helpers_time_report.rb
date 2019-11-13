@@ -17,11 +17,13 @@ module Smile
             #####################
             # 1/ Instance methods
             new_criteria_instance_methods = [
-              :load_available_criteria, # 2/ OVERRIDEN
+              :load_available_criteria, # 1/ OVERRIDEN
             ]
 
             if ! defined?(Localizable)
-              SmileTools.trace_override "#{base.name}       NOT overriden  plugin localizable NOT installed < (SM::RedmineOverride::HelpersOverride::TimeReportOverride::NewCriteria)"
+              SmileTools.trace_override "#{base.name}       NOT overriden  plugin localizable NOT installed < (SM::RedmineOverride::HelpersOverride::TimeReportOverride::NewCriteria)", true,
+                :redmine_queries_for_time_report
+
               return
             end
 
@@ -37,7 +39,8 @@ module Smile
               smile_instance_methods,
               trace_first_prefix,
               trace_prefix,
-              last_postfix
+              last_postfix,
+              :redmine_queries_for_time_report
             )
 
             ##################
@@ -72,7 +75,8 @@ module Smile
               ),
               trace_first_prefix,
               trace_prefix,
-              last_postfix
+              last_postfix,
+              :redmine_queries_for_time_report
             )
 
             if missing_class_methods.any?
@@ -80,7 +84,7 @@ module Smile
             end
           end # def self.prepended
 
-          # 2/ EXTENDED, RM V4.0.0 OK
+          # 1/ EXTENDED, RM V4.0.0 OK
           # Smile specific #797962 Time Entry Report Queries
           # Smile specific #77476 Demandes : colonne Tâche racine
           # Smile specific : criteria MOVED to get_available_criteria
