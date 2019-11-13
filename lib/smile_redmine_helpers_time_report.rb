@@ -20,13 +20,6 @@ module Smile
               :load_available_criteria, # 1/ OVERRIDEN
             ]
 
-            if ! defined?(Localizable)
-              SmileTools.trace_override "#{base.name}       NOT overriden  plugin localizable NOT installed < (SM::RedmineOverride::HelpersOverride::TimeReportOverride::NewCriteria)", true,
-                :redmine_queries_for_time_report
-
-              return
-            end
-
             smile_instance_methods = base.instance_methods.select{|m|
                 base.instance_method(m).owner == self
               }
@@ -51,7 +44,7 @@ module Smile
 
             base.singleton_class.prepend ClassMethods
 
-            last_postfix    = '< (SM::RedmineOverride::HelpersOverride::TimeReportOverride::BAR::CMeths)'
+            last_postfix    = '< (SM::RedmineOverride::HelpersOverride::TimeReportOverride::NewCriteria::CMeths)'
 
             smile_class_methods = base.methods.select{|m|
                 base.method(m).owner == ClassMethods
