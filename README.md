@@ -74,6 +74,7 @@ It also allows to add Time Entry queries to **My Page**
 
 * Add Tests
 * Fix TODOS
+* missing translation
 
 # To test it
 
@@ -88,4 +89,4 @@ scripts/test_it.sh
 
 Enjoy !
 
-<kbd>![alt text](https://compteur-visites.ennder.fr/sites/36/token/githubtrq/image "Logo") <!-- .element height="10%" width="10%" --></kbd>
+<kbd>![alt text](https://compteur-visites.ennder.fr/sites/37/token/githubtrq/image "Logo") <!-- .element height="10%" width="10%" --></kbd>
