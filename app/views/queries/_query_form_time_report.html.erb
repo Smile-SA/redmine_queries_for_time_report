@@ -23,7 +23,7 @@
 <%
       ################
       # Smile specific : + debug
-      if query.debug
+      if query.respond_to?(:debug) && query.debug
 -%>
         <tr>
           <td>
