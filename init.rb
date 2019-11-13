@@ -89,6 +89,7 @@ rails_dispatcher.to_prepare do
   required = [
     # lib/
     '/lib/smile_redmine_my_page',
+    '/lib/smile_redmine_helpers_time_report',
 
     # lib/controllers
     '/lib/controllers/smile_controllers_timelog',
@@ -96,6 +97,7 @@ rails_dispatcher.to_prepare do
     # lib/helpers
     '/lib/helpers/smile_helpers_timelog',
     '/lib/helpers/smile_helpers_my',
+    '/lib/helpers/smile_helpers_queries',
 
     # lib/models
     '/lib/models/smile_models_query',
@@ -144,6 +146,11 @@ rails_dispatcher.to_prepare do
   require_dependency 'lib/redmine/my_page'
   prepend_in(Redmine::MyPage, Redmine::MyPage::Query4TimeReport)
 
+  prepend_in(Redmine::Helpers::TimeReport,
+      Smile::RedmineOverride::HelpersOverride::TimeReportOverride::NewCriteria
+    )
+
+
   #***************************
   # **** 6.1/ Controllers ****
   #Rails.logger.info "o=>----- CONTROLLERS"
@@ -155,6 +162,7 @@ rails_dispatcher.to_prepare do
   Rails.logger.info "o=>----- HELPERS"
   prepend_in(TimelogHelper, Smile::Helpers::TimelogOverride::Query4TimeReport)
   prepend_in(MyHelper, Smile::Helpers::MyOverride::Query4TimeReport)
+  prepend_in(QueriesHelper, Smile::Helpers::QueriesOverride::Query4TimeReport)
 
   #**********************
   # **** 6.3/ Models ****
