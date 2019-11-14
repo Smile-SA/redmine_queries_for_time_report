@@ -4,4 +4,4 @@
 ca:
   label_criteria: Criteria
   label_time_report_query_plural: Time entry Reports
-  label_max_criteria: '4 màxims'
+  label_max_criteria: "%{count} màxims"

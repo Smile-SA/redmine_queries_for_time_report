@@ -4,4 +4,4 @@
 en:
   label_criteria: Criteria
   label_time_report_query_plural: Time entry Reports
-  label_max_criteria: '4 maximum'
+  label_max_criteria: "%{count} maximum"
