@@ -74,7 +74,7 @@ It also allows to add Time Entry queries to **My Page**
 
 * Add Tests
 * Fix TODOS
-* missing translation
+* Complete the overriden / added files
 
 # To test it
 
