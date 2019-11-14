@@ -10,7 +10,7 @@
     <div style="display: none;">
       <table>
         <tr>
-          <td class="field"><%= l(:label_criteria) %> (<%= l(:label_max_criteria) %>)</td>
+          <td class="field"><%= l(:label_criteria) %> (<%= l(:label_max_criteria, Query.max_criteria) %>)</td>
           <td>
             <%= render_query_criteria_selection(query) %>
           </td>
