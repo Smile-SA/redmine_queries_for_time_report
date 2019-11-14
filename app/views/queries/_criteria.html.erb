@@ -61,7 +61,7 @@ $(document).ready(function(){
   });
 });
 
-var max_criteria = 3;
+var max_criteria = <%= Query.max_criteria %>;
 function getAvailaibleCriteriaSelect(){
   return $('#<%= available_tag_id %>');
 }
