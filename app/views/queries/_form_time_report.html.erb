@@ -4,7 +4,7 @@
   # Smile specific #797962 Time Entry Report Queries
 -%>
 <%= content_tag 'fieldset', :id => 'criteria' do %>
-<legend><%= l(:label_criteria) %> (<%= l(:label_max_criteria) %>)</legend>
+<legend><%= l(:label_criteria) %> (<%= l(:label_max_criteria, Query.max_criteria) %>)</legend>
 <%= render_query_criteria_selection(query) %>
 <% end %>
 
