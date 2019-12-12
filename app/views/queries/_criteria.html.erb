@@ -1,8 +1,9 @@
 <%
-  # Smile specific
+  # Smile specific : new file copied from columns partial
   # RM V4.0.0 OK
   #
   # * #797962 Time Entry Report Queries
+  # * #245965 Rapport : critères, indication type champ personnalisé
   # * #375235 Hook dans partiel querie/column
 -%>
 <% tag_id = tag_name.gsub(/[\[\]]+/, '_').sub(/_+$/, '') %>
@@ -15,7 +16,7 @@
 <%
   ################
   # Smile specific #245965 Rapport : critères, indication type champ personnalisé
-  # Smile specific : style width
+  # Smile specific : +style min-width
 -%>
       <%= select_tag 'available_criteria',
               options_for_select(query_available_criteria_options(query)),
@@ -31,6 +32,11 @@
   </span>
   <span>
       <%= label_tag selected_tag_id, l(:description_selected_columns) %>
+<%
+  ################
+  # Smile specific #245965 Rapport : critères, indication type champ personnalisé
+  # Smile specific : +style min-width
+-%>
       <%= select_tag tag_name,
               options_for_select(query_selected_criteria_options(query)),
               :id => selected_tag_id,
