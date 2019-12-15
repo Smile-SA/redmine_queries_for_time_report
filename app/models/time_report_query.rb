@@ -321,7 +321,12 @@ class TimeReportQuery < Query
 
   # Accepts :from/:to params as shortcut filters
   def build_from_params(params, defaults={})
-    super
+    if Redmine::VERSION::MAJOR < 4
+      super(params)
+    else
+      super(params, defaults)
+    end
+
     if params[:from].present? && params[:to].present?
       add_filter('spent_on', '><', [params[:from], params[:to]])
     elsif params[:from].present?
