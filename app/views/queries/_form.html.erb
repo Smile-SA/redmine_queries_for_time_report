@@ -2,6 +2,14 @@
   # Smile specific
   # RM V4.0.3 OK
   #
+  # TESTED
+  #
+  # * #318987 Show issue query owner for Admins
+  # * #67860 Désactivation des rôles obsolètes lors de l'ajout d'un membre dans un projet
+  # * #267538 Demandes : Export Csv + Pdf, conversion en jours
+  # * #256456 Sauvegarder la case à cocher "Include sub-tasks time"
+  # * #539595 Requête personnalisée : Filtres avancés (Demande, Parent, Racine)
+  # * #346641 Forbid setting query public to others than me for non-admins
   # * #797962 Time Entry Report Queries
 
   ################
@@ -18,12 +26,34 @@
 <%= text_field 'query', 'name', :size => 80 %></p>
 
 <% if User.current.admin? || User.current.allowed_to?(:manage_public_queries, @query.project) %>
+
+<%
+  ################
+  # Smile specific #318987 Show issue query owner for Admins
+-%>
+<p><label><%= l(:field_user) %></label><%= @query.user ? @query.user.name : l(label_none) %></p>
 <p><label><%=l(:field_visible)%></label>
   <label class="block"><%= radio_button 'query', 'visibility', Query::VISIBILITY_PRIVATE %> <%= l(:label_visibility_private) %></label>
   <label class="block"><%= radio_button 'query', 'visibility', Query::VISIBILITY_PUBLIC %> <%= l(:label_visibility_public) %></label>
   <label class="block"><%= radio_button 'query', 'visibility', Query::VISIBILITY_ROLES %> <%= l(:label_visibility_roles) %>:</label>
-  <% Role.givable.sorted.each do |role| %>
-    <label class="block role-visibility"><%= check_box_tag 'query[role_ids][]', role.id, @query.roles.include?(role), :id => nil %> <%= role.name %></label>
+<%
+  ################
+  # Smile specific #67860 Désactivation des rôles obsolètes lors de l'ajout d'un membre dans un projet
+  if respond_to?('roles_settable_hook')
+    roles_only_settable, roles_only_unsettable = roles_settable_hook(Role.givable.sorted, params[:debug])
+  else
+    roles_only_settable, roles_only_unsettable = Role.givable.sorted, []
+  end
+
+  roles_only_settable.each do |role|
+    role_label = role.name
+    if roles_only_unsettable.include?(role)
+      role_label = "<span class=\"unsettable\">#{h(role_label)}</span>".html_safe
+    end
+
+    # Smile specific role -> role_label
+-%>
+    <label class="block role-visibility"><%= check_box_tag 'query[role_ids][]', role.id, @query.roles.include?(role), :id => nil %> <%= role_label %></label>
   <% end %>
   <%= hidden_field_tag 'query[role_ids][]', '' %>
 </p>
@@ -51,6 +81,22 @@
     ################
     # Smile specific #797962 Time Entry Report Queries
     end
+-%>
+
+<%
+    ################
+    # Smile specific #267538 Demandes : Export Csv + Pdf, conversion en jours
+    # Smile specific : NEW HOURS BY DAY
+    if @query.respond_to?('hours_by_day')
+-%>
+<p>
+  <label><%= l(:label_hours_by_day) %></label>
+  <label class="inline"><%= number_field_tag 'hours_by_day', @query.hours_by_day, in: 1...24, :size => 2, :maxlength => 2 %></label>
+</p>
+<%
+    end
+    # END -- Smile specific #267538 Demandes : Export Csv + Pdf, conversion en jours
+    #######################
 
     ################
     # Smile specific #797962 Time Entry Report Queries
@@ -66,6 +112,53 @@
 -%>
 <p><label><%= l(:label_total_plural) %></label>
 <%= available_totalable_columns_tags(@query) %></p>
+<%
+    ################
+    # Smile specific #797962 Time Entry Report Queries
+    # Smile specific : NOT for TIME REPORT QUERIES
+    unless is_time_report_query
+      ################
+      # Smile specific #256456 Sauvegarder la case à cocher "Include sub-tasks time"
+      # Smile specific : NEW WITH CHILDREN
+      if @query.respond_to?('with_children')
+-%>
+<p>
+  <label><%= l(:label_include_children_time) %></label>
+  <label class="inline"><%= check_box_tag "query[with_children]", '1', @query.with_children %></label>
+</p>
+<%
+      end
+
+      ################
+      # Smile specific : NEW ADDITIONAL INFOS
+      if @query.respond_to?('group_additional_infos')
+-%>
+<p id="group_additional_infos">
+  <label><%= l(:label_group_additional_infos) %></label>
+  <label class="inline"><%= check_box_tag "query[group_additional_infos]", '1', @query.group_additional_infos %></label>
+</p>
+<%
+      end
+      # END -- Smile specific #256456 Sauvegarder la case à cocher "Include sub-tasks time"
+      #######################
+    ################
+    # Smile specific #797962 Time Entry Report Queries
+    end
+
+    ################
+    # Smile specific #539595 Requête personnalisée : Filtres avancés (Demande, Parent, Racine)
+    # Smile specific : NEW ADVANCED FILTERS
+    if @query.project && @query.respond_to?('advanced_filters')
+-%>
+<p id="p_advanced_filters">
+  <label><%= l(:label_advanced_filters) %></label>
+  <label class="inline"><%= check_box_tag "query[advanced_filters]", '1', @query.advanced_filters %>&nbsp;&nbsp;(<%= l(:message_advanced_filters_will_appear) %>)</label>
+</p>
+<%
+    end
+    # END -- Smile specific #539595 Requête personnalisée : Filtres avancés (Demande, Parent, Racine)
+    #######################
+%>
 </fieldset>
 <% else %>
 <fieldset id="options"><legend><%= l(:label_options) %></legend>
@@ -81,6 +174,18 @@
 
 <fieldset id="filters"><legend><%= l(:label_filter_plural) %></legend>
 <%= render :partial => 'queries/filters', :locals => {:query => query}%>
+</fieldset>
+
+<%
+  ################
+  # Smile specific : NEW OR FILTERS
+  if @query.respond_to?('or_filters')
+-%>
+<fieldset id="or-filters"><legend><%= "#{l(:label_filter_plural)} (#{l(:label_or)})" %></legend>
+<%= render :partial => 'queries/or_filters', :locals => {:query => query} %>
+<%
+  end
+-%>
 </fieldset>
 
 <% unless params[:gantt] %>
@@ -145,6 +250,48 @@ $(document).ready(function(){
     $("input[name='query[role_ids][]'][type=checkbox]").attr('disabled', !roles_checked);
     if (!private_checked) $("input.disable-unless-private").attr('checked', false);
     $("input.disable-unless-private").attr('disabled', !private_checked);
+<%
+    ################
+    # Smile specific #346641 Forbid setting query public to others than me for non-admins
+    unless User.current.admin?
+-%>
+    var checked_own = $('#query_visibility_0').is(':checked');
+    $("input[name='query_is_for_all']").attr('disabled', !checked_own);
+    $("input[name='query_is_for_all']").prop('checked', false);
+<%
+    end
+    # END -- Smile specific #346641 Forbid setting query public to others than me for non-admins
+    #######################
+-%>
   }).trigger('change');
+<%
+  ################
+  # Smile specific #256456 Sauvegarder la case à cocher "Include sub-tasks time"
+  if @query.respond_to?('group_additional_infos')
+-%>
+  $("select[name='query[group_by]']").change(function(){
+    var checked = $('#query_group_by').val() != '';
+    $("input[name='query[group_additional_infos]'][type=checkbox]").attr('disabled', !checked);
+    $("#group_additional_infos").attr('hidden', !checked);
+  }).trigger('change');
+<%
+  end
+  # END -- Smile specific #256456 Sauvegarder la case à cocher "Include sub-tasks time"
+  #######################
+
+  ################
+  # Smile specific #539595 Requête personnalisée : Filtres avancés (Demande, Parent, Racine)
+  if @query.respond_to?('advanced_filters')
+-%>
+  $("input[name='query_is_for_all']").change(function(){
+    var checked = $(this).is(':checked');
+    $('#query_advanced_filters').attr('disabled', checked);
+    $('#p_advanced_filters').attr('hidden', checked);
+  });
+<%
+  end
+  # END -- Smile specific #539595 Requête personnalisée : Filtres avancés (Demande, Parent, Racine)
+  #######################
+-%>
 });
 <% end %>
