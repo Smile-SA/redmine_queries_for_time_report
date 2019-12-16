@@ -2,7 +2,6 @@
 # - #134828 New issues list columns (Array, IssueRelations, Watchers)
 # - #121222: Rapport, info demande séparer tracker, numéro, sujet
 # - #994 Budget and Remaining management
-# - #222040 Liste des entrées de temps : dé-sérialisation colonne Demande et filtres
 # - #238910 Liste des demandes : conversion jours comme dans le rapport
 # - #256456 Sauvegarder la case à cocher "Include sub-tasks time"
 # - #270175 JournalQuery : Types Brut, Hebdo, Mensuel

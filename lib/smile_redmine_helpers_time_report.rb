@@ -162,7 +162,7 @@ module Smile
               # Criteria sorted by alphabetical order in the Smile plugin
               # => No need to put it near the project criterium
               unless project
-                available_criteria['bu'] = { :sql => 'bu_project_id.customized_id',
+                available_criteria['bu_project'] = { :sql => 'bu_project_id.customized_id',
                                               :klass => Project,
                                               :label => :label_bu}
               end
