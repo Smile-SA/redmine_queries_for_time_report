@@ -139,7 +139,7 @@
       # Smile specific #100718 Liste demandes : total F / G / D au niveau de chaque groupe
       # Smile specific : NEW GROUP ADDITIONAL INFOS
       if (
-        @query.respond_to?('group_additional_infos') &&
+        Query.respond_to?('group_additional_infos_provided?') && Query.group_additional_infos_provided? &&
         (
           (
             @sorted_time_columns_enabled &&
@@ -230,7 +230,7 @@ $(document).ready(function(){
       # Smile specific : WITH CHILDREN
       # Not enabled if NO project has been selected, consuming too much resources
       if (
-        @query.respond_to?('with_children') &&
+        Query.respond_to?('with_children_provided?') && Query.with_children_provided? &&
         (
           (
             @sorted_time_columns_enabled &&

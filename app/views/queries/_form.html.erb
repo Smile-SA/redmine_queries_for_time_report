@@ -120,7 +120,7 @@
       ################
       # Smile specific #256456 Sauvegarder la case à cocher "Include sub-tasks time"
       # Smile specific : NEW WITH CHILDREN
-      if @query.respond_to?('with_children')
+      if Query.respond_to?('with_children_provided?') && Query.with_children_provided?
 -%>
 <p>
   <label><%= l(:label_include_children_time) %></label>
@@ -131,7 +131,7 @@
 
       ################
       # Smile specific : NEW ADDITIONAL INFOS
-      if @query.respond_to?('group_additional_infos')
+      if Query.respond_to?('group_additional_infos_provided?') && Query.group_additional_infos_provided?
 -%>
 <p id="group_additional_infos">
   <label><%= l(:label_group_additional_infos) %></label>
@@ -267,7 +267,7 @@ $(document).ready(function(){
 <%
   ################
   # Smile specific #256456 Sauvegarder la case à cocher "Include sub-tasks time"
-  if @query.respond_to?('group_additional_infos')
+  if Query.respond_to?('group_additional_infos_provided?') && Query.group_additional_infos_provided?
 -%>
   $("select[name='query[group_by]']").change(function(){
     var checked = $('#query_group_by').val() != '';
