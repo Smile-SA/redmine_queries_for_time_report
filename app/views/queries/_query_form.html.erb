@@ -1,6 +1,29 @@
 <%
   # Smile specific :
   # RM V4.0.3 OK
+  #
+  # TESTED
+  #
+  # * BAR
+  #   * #100718 Liste demandes : total F / G / D au niveau de chaque groupe
+  #
+  #   * #245281 Demandes, Rapport, case à cocher sommer les temps
+  #
+  #   * #185601 champ de saisie du nombre d'heures par jour
+  #
+  #   * #238910 Liste des demandes : conversion jours comme dans le rapport
+  #
+  # * #539595 Requête personnalisée : Filtres avancés (Demande, Parent, Racine)
+  #   2017
+  #
+  # * #340206 Filtre additifs
+  #
+  # * #238917 Rapport : case à cocher Tracker
+  #
+  # * #47664 Rendre la case "sans les sous-tâches" optionnelle
+  #
+  # * #256456 Sauvegarder la case à cocher "Include sub-tasks time"
+
 
   ################
   # Smile specific #797962 Time Entry Report Queries
@@ -29,6 +52,23 @@
       <%= render :partial => 'queries/filters', :locals => {:query => @query} %>
     </div>
   </fieldset>
+<%
+  ################
+  # Smile specific #340206 Filtre additifs
+  # Smile specific : NEW OR FILTERS
+  if @query.respond_to?('or_filters')
+-%>
+  <fieldset id="or-filters" class="collapsible <%= @query.new_record? ? "" : "collapsed" %>">
+    <legend onclick="toggleFieldset(this);"><%= "#{l(:label_filter_plural)} (#{l(:label_or)})" %></legend>
+    <div style="<%= @query.new_record? ? "" : "display: none;" %>">
+      <%= render :partial => 'queries/or_filters', :locals => {:query => @query} %>
+    </div>
+  </fieldset>
+<%
+  end
+  # END -- Smile specific #340206 Filtre additifs
+  #######################
+-%>
 
   <fieldset id="options" class="collapsible collapsed">
     <legend onclick="toggleFieldset(this);"><%= l(:label_options) %></legend>
@@ -48,6 +88,41 @@
     end
 
     ################
+    # Smile specific #185601 champ de saisie du nombre d'heures par jour
+    # Smile specific : NEW HOURS BY DAY
+    if @query.respond_to?('hours_by_day')
+-%>
+        <tr>
+          <td class="field"><%= l(:label_hours_by_day) %></td>
+          <td>
+            <%= number_field_tag 'hours_by_day', @query.hours_by_day, in: 1...24, :size => 2, :maxlength => 2 %>
+          </td>
+        </tr>
+<%
+    end
+    # END -- Smile specific #185601 champ de saisie du nombre d'heures par jour
+    #######################
+
+    ################
+    # Smile specific #539595 Requête personnalisée : Filtres avancés (Demande, Parent, Racine)
+    # Smile specific : NEW ADVANCED FILTERS
+    if @query.project && @query.respond_to?('advanced_filters')
+-%>
+        <tr id="tr_advanced_filters">
+          <td><%= l(:label_advanced_filters) %></td>
+          <td>
+            <label for="advanced_filters">
+              <%= check_box_tag 'advanced_filters', '1', @query.advanced_filters %>&nbsp;&nbsp;(<%= l(:message_advanced_filters_will_appear) %>)
+            </label>
+          </td>
+        </tr>
+<%
+    end
+    # END -- Smile specific #539595 Requête personnalisée : Filtres avancés (Demande, Parent, Racine)
+    #######################
+
+
+    ################
     # Smile specific #797962 Time Entry Report Queries
     # Smile specific : NOT for TIME REPORT QUERIES
     unless is_time_report_query
@@ -59,6 +134,44 @@
         </tr>
         <% end %>
 <%
+      ################
+      # Smile specific #100718 Liste demandes : total F / G / D au niveau de chaque groupe
+      # Smile specific : NEW GROUP ADDITIONAL INFOS
+      if (
+        Query.respond_to?('group_additional_infos_provided?') && Query.group_additional_infos_provided? &&
+        (
+          (
+            @sorted_time_columns_enabled &&
+            @sorted_time_columns_enabled.any?
+          ) ||
+          @done_ratio_column_enabled
+        )
+      )
+-%>
+        <tr id="tr_group_additional_infos">
+          <td><%= l(:label_group_additional_infos) %></td>
+          <td>
+            <label for="group_additional_infos">
+              <%= check_box_tag 'group_additional_infos', '1', @query.group_additional_infos %>
+            </label>
+          </td>
+        </tr>
+<%=     javascript_tag do -%>
+<%
+      # visibility of group_additional_infos checkbox and it's tr depending if query is grouped
+-%>
+$(document).ready(function(){
+  $("select[name='group_by']").change(function(){
+    var checked = $('#group_by').val() != '';
+    $("input[name='query[group_additional_infos]'][type=checkbox]").attr('disabled', !checked);
+    $("#tr_group_additional_infos").attr('hidden', !checked);
+  }).trigger('change');
+});
+<%
+        end
+      end # if @sorted_time_columns_enabled && @sorted_time_columns_enabled.any?
+      # END -- Smile specific #100718 Liste demandes : total F / G / D au niveau de chaque groupe
+      #######################
     end # unless is_time_report_query
 
     ################
@@ -110,6 +223,50 @@
     # Smile specific #797962 Time Entry Report Queries
     # Smile specific : NOT for TIME REPORT QUERIES
     unless is_time_report_query
+      ################
+      # Smile specific #256456 Sauvegarder la case à cocher "Include sub-tasks time"
+      # Smile specific #100718 Liste demandes : total F / G / D au niveau de chaque groupe
+      # Smile specific : WITH CHILDREN
+      # Not enabled if NO project has been selected, consuming too much resources
+      if (
+        Query.respond_to?('with_children_provided?') && Query.with_children_provided?
+        (
+          (
+            @sorted_time_columns_enabled &&
+            @sorted_time_columns_enabled.any?
+          ) ||
+          @done_ratio_column_enabled
+        )
+      )
+-%>
+  <fieldset id="with_children" class="collapsible collapsed">
+    <legend onclick="toggleFieldset(this);"><%= l(:label_with_children) %></legend>
+    <div style="display: none;">
+      <table>
+        <tr>
+          <td><%= l(:label_include_children_time) %></td>
+          <td>
+            <label for="with_children">
+              <%= check_box_tag 'with_children', '1', @query.with_children %>
+            </label>
+        </tr>
+    <% if @query.with_children %>
+        <tr>
+          <td>
+            <b>⊨</b>
+          </td>
+          <td>
+            <%= l(:label_with_children_symbol_explanation).html_safe %>
+          </td>
+        </tr>
+    <% end %>
+      </table>
+    </div>
+  </fieldset>
+<%
+      end
+      # END -- Smile specific #256456 Sauvegarder la case à cocher "Include sub-tasks time"
+      #######################
     else
       ################
       # Smile specific #797962 Time Entry Report Queries
