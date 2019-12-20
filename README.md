@@ -17,6 +17,10 @@ It also allows to add Time Entry queries to **My Page**
 
   To be able to configure and save Time Report Queries
 
+  Enables features provided by **redmine_extended_queries** plugin
+
+  Because these two plugins override the same views
+
 * Tested with **Redmine V4.0.3**
 
 ## How it is implemented
@@ -85,6 +89,9 @@ scripts/test_it.sh
 
 # Changelog
 
+* **V1.0.2**  Enabled optional features provided in redmine_extended_queries plugin
+because these two plugins override the same views :
+**app/views/queries/_query_form.html.erb** and **app/views/queries/_form.html.erb**
 * **V1.0**  Initial version
 
 Enjoy !
