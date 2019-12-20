@@ -6,8 +6,9 @@
   #
   # * #318987 Show issue query owner for Admins
   # * #67860 Désactivation des rôles obsolètes lors de l'ajout d'un membre dans un projet
-  # * #267538 Demandes : Export Csv + Pdf, conversion en jours
-  # * #256456 Sauvegarder la case à cocher "Include sub-tasks time"
+  # * BAR
+  #   * #267538 Demandes : Export Csv + Pdf, conversion en jours
+  #   * #256456 Sauvegarder la case à cocher "Include sub-tasks time"
   # * #539595 Requête personnalisée : Filtres avancés (Demande, Parent, Racine)
   # * #346641 Forbid setting query public to others than me for non-admins
   # * #797962 Time Entry Report Queries
@@ -99,6 +100,20 @@
     #######################
 
     ################
+    # Smile specific #267538 Demandes : Export Csv + Pdf, conversion en jours
+    # Smile specific : NEW HOURS BY DAY
+    if @query.respond_to?('hours_by_day')
+-%>
+<p>
+  <label><%= l(:label_hours_by_day) %></label>
+  <label class="inline"><%= number_field_tag 'hours_by_day', @query.hours_by_day, in: 1...24, :size => 2, :maxlength => 2 %></label>
+</p>
+<%
+    end
+    # END -- Smile specific #267538 Demandes : Export Csv + Pdf, conversion en jours
+    #######################
+
+    ################
     # Smile specific #797962 Time Entry Report Queries
     # Smile specific : NOT for TIME REPORT QUERIES
     unless is_time_report_query
@@ -175,6 +190,18 @@
 <fieldset id="filters"><legend><%= l(:label_filter_plural) %></legend>
 <%= render :partial => 'queries/filters', :locals => {:query => query}%>
 </fieldset>
+<%
+
+  ################
+  # Smile specific : NEW OR FILTERS
+  if @query.respond_to?('or_filters')
+-%>
+<fieldset id="or-filters"><legend><%= "#{l(:label_filter_plural)} (#{l(:label_or)})" %></legend>
+<%= render :partial => 'queries/or_filters', :locals => {:query => query} %>
+</fieldset>
+<%
+  end
+-%>
 
 <%
   ################
