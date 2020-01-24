@@ -20,20 +20,8 @@ class TimeReportQuery < Query
   self.queried_class = TimeEntry
   self.view_permission = :view_time_entries
 
+  # Empty : no columns in Time Report
   self.available_columns = [
-    QueryColumn.new(:project, :sortable => "#{Project.table_name}.name", :groupable => true),
-    QueryColumn.new(:spent_on, :sortable => ["#{TimeEntry.table_name}.spent_on", "#{TimeEntry.table_name}.created_on"], :default_order => 'desc', :groupable => true),
-    QueryColumn.new(:created_on, :sortable => "#{TimeEntry.table_name}.created_on", :default_order => 'desc'),
-    QueryColumn.new(:tweek, :sortable => ["#{TimeEntry.table_name}.spent_on", "#{TimeEntry.table_name}.created_on"], :caption => :label_week),
-    QueryColumn.new(:author, :sortable => lambda {User.fields_for_order_statement}),
-    QueryColumn.new(:user, :sortable => lambda {User.fields_for_order_statement}, :groupable => true),
-    QueryColumn.new(:activity, :sortable => "#{TimeEntryActivity.table_name}.position", :groupable => true),
-    QueryColumn.new(:issue, :sortable => "#{Issue.table_name}.id"),
-    QueryAssociationColumn.new(:issue, :tracker, :caption => :field_tracker, :sortable => "#{Tracker.table_name}.position"),
-    QueryAssociationColumn.new(:issue, :status, :caption => :field_status, :sortable => "#{IssueStatus.table_name}.position"),
-    QueryAssociationColumn.new(:issue, :category, :caption => :field_category, :sortable => "#{IssueCategory.table_name}.name"),
-    QueryColumn.new(:comments),
-    QueryColumn.new(:hours, :sortable => "#{TimeEntry.table_name}.hours", :totalable => true),
   ]
 
   def initialize(attributes=nil, *args)
@@ -100,18 +88,6 @@ class TimeReportQuery < Query
     add_associations_custom_fields_filters :user
   end
 
-  def available_columns
-    return @available_columns if @available_columns
-    @available_columns = self.class.available_columns.dup
-    @available_columns += TimeEntryCustomField.visible.
-                            map {|cf| QueryCustomFieldColumn.new(cf) }
-    @available_columns += issue_custom_fields.visible.
-                            map {|cf| QueryAssociationCustomFieldColumn.new(:issue, cf, :totalable => false) }
-    @available_columns += ProjectCustomField.visible.
-                            map {|cf| QueryAssociationCustomFieldColumn.new(:project, cf) }
-    @available_columns
-  end
-
   # new method, RM 4.0.3 OK
   # Smile specific #797962 Time Entry Report Queries
   def available_criteria
@@ -162,17 +138,11 @@ class TimeReportQuery < Query
     @available_criteria_options
   end
 
-  def default_columns_names
-    @default_columns_names ||= begin
-      default_columns = Setting.time_entry_list_defaults.symbolize_keys[:column_names].map(&:to_sym)
-      project.present? ? default_columns : [:project] | default_columns
-    end
-  end
-
   def default_totalable_names
     Setting.time_entry_list_defaults.symbolize_keys[:totalable_names].map(&:to_sym)
   end
 
+  # TODO to remove : no sort in Time Report
   def default_sort_criteria
     [['spent_on', 'desc']]
   end
