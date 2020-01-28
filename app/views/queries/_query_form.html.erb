@@ -56,7 +56,7 @@
   ################
   # Smile specific #340206 Filtre additifs
   # Smile specific : NEW OR FILTERS
-  if @query.respond_to?('or_filters')
+  if @query.respond_to?('or_filters_provided?')
 -%>
   <fieldset id="or-filters" class="collapsible <%= @query.new_record? ? "" : "collapsed" %>">
     <legend onclick="toggleFieldset(this);"><%= "#{l(:label_filter_plural)} (#{l(:label_or)})" %></legend>

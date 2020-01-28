@@ -194,7 +194,7 @@
 
   ################
   # Smile specific : NEW OR FILTERS
-  if @query.respond_to?('or_filters')
+  if @query.respond_to?('or_filters_provided?')
 -%>
 <fieldset id="or-filters"><legend><%= "#{l(:label_filter_plural)} (#{l(:label_or)})" %></legend>
 <%= render :partial => 'queries/or_filters', :locals => {:query => query} %>
@@ -206,7 +206,7 @@
 <%
   ################
   # Smile specific : NEW OR FILTERS
-  if @query.respond_to?('or_filters')
+  if @query.respond_to?('or_filters_provided?')
 -%>
 <fieldset id="or-filters"><legend><%= "#{l(:label_filter_plural)} (#{l(:label_or)})" %></legend>
 <%= render :partial => 'queries/or_filters', :locals => {:query => query} %>
