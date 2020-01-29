@@ -89,6 +89,8 @@ scripts/test_it.sh
 
 # Changelog
 
+* **V1.0.3**  Redmine V3.4.6 minimum, + UserCustomFields in TimeReport Criteria
+because these two plugins override the same views :
 * **V1.0.2**  Enabled optional features provided in redmine_extended_queries plugin
 because these two plugins override the same views :
 **app/views/queries/_query_form.html.erb** and **app/views/queries/_form.html.erb**
