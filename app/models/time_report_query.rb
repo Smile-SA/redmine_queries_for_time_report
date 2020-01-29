@@ -116,6 +116,9 @@ class TimeReportQuery < Query
       elsif cf_class == ProjectCustomField
         criteria_order = l(:label_project)[0]
         criteria_label = l("label_attribute_of_project", :name => criteria[:label])
+      elsif cf_class == UserCustomField
+        criteria_order = l(:label_user)[0]
+        criteria_label = l("label_attribute_of_user", :name => criteria[:label])
       else
         criteria_order = nil
         criteria_label = l_or_humanize(criteria[:label])
@@ -139,7 +142,11 @@ class TimeReportQuery < Query
   end
 
   def default_totalable_names
-    Setting.time_entry_list_defaults.symbolize_keys[:totalable_names].map(&:to_sym)
+    if Setting.respond_to?(:time_entry_list_defaults)
+      Setting.time_entry_list_defaults.symbolize_keys[:totalable_names].map(&:to_sym)
+    else
+      [:hours]
+    end
   end
 
   # TODO to remove : no sort in Time Report

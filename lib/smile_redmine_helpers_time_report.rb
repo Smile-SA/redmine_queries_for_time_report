@@ -173,6 +173,11 @@ module Smile
               custom_fields = TimeEntryCustomField.visible
               # Add project custom fields
               custom_fields += ProjectCustomField.visible
+
+              ################
+              # Smile specific : add project custom fields
+              custom_fields += UserCustomField.all
+
               # Add issue custom fields
               custom_fields += project.nil? ? IssueCustomField.visible.for_all : project.all_issue_custom_fields.visible
               # Add time entry activity custom fields

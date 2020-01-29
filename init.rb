@@ -24,7 +24,7 @@ Redmine::Plugin.register plugin_name do
   description 'Adds Queries to Time Report like Time Entry Queries'
   url "https://github.com/Smile-SA/#{plugin_name}"
   version '1.0.2'
-  requires_redmine :version_or_higher => '4.0.0'
+  requires_redmine :version_or_higher => '3.4.6'
 
 
   #######################
