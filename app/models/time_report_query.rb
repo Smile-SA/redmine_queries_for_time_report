@@ -97,7 +97,6 @@ class TimeReportQuery < Query
   # new method, RM 4.0.3 OK
   # Smile specific #797962 Time Entry Report Queries
   # Smile specific #245965 Rapport : critères, indication type champ personnalisé
-  # TODO move to redmine_smile_enhancements_plugin override
   def available_criteria_options
     return @available_criteria_options if defined?(@available_criteria_options)
 
@@ -107,18 +106,31 @@ class TimeReportQuery < Query
     @available_criteria_options = available_criteria.collect{|k, criteria|
       cf_class = criteria[:custom_field].class
 
-      if (cf_class == TimeEntryCustomField) || (cf_class == TimeEntryActivityCustomField)
-        criteria_order = 'A' # in first
-        criteria_label = '<' + l(:label_custom_field) + '> ' + l_or_humanize(criteria[:label])
+      if k == 'root'
+        criteria_order = 'F5'
+        criteria_label = l("label_with_children_symbol") + ' ' + l_or_humanize(criteria[:label])
+      elsif k == 'parent'
+        criteria_order = 'F6'
+        criteria_label = l("label_with_children_symbol") + ' ' + l_or_humanize(criteria[:label])
+      elsif k == 'issue'
+        criteria_order = 'F7'
+        criteria_label = l("label_with_children_symbol") + ' ' + l_or_humanize(criteria[:label])
+      elsif  k == 'spent_on'
+        criteria_order = 'G'
+        criteria_label = l("label_calendar_icon") + ' ' + l_or_humanize(criteria[:label])
+      elsif (cf_class == TimeEntryCustomField) || (cf_class == TimeEntryActivityCustomField)
+        criteria_order = 'H' # in first in custom fields
+        criteria_label = l(:label_tool_icon) + ' ' + l_or_humanize(criteria[:label])
       elsif cf_class == IssueCustomField
-        criteria_order = l(:label_issue)[0]
-        criteria_label = l("label_attribute_of_issue", :name => criteria[:label])
+        criteria_order = 'I'
+        criteria_label = l(:label_tool_icon) + ' ' + l("label_attribute_of_issue", :name => criteria[:label])
       elsif cf_class == ProjectCustomField
-        criteria_order = l(:label_project)[0]
-        criteria_label = l("label_attribute_of_project", :name => criteria[:label])
+        criteria_order = 'P'
+        criteria_label = l(:label_tool_icon) + ' ' + l("label_attribute_of_project", :name => criteria[:label])
       elsif cf_class == UserCustomField
+        criteria_order = 'Q'
         criteria_order = l(:label_user)[0]
-        criteria_label = l("label_attribute_of_user", :name => criteria[:label])
+        criteria_label = l(:label_tool_icon) + ' ' + l("label_attribute_of_user", :name => criteria[:label])
       else
         criteria_order = nil
         criteria_label = l_or_humanize(criteria[:label])
