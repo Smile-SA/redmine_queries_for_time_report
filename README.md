@@ -89,6 +89,7 @@ scripts/test_it.sh
 
 # Changelog
 
+* **V1.0.5**  **criteria selection** at the beginning
 * **V1.0.4**  **available_criteria_options** : sorted criteria + prefix by glyphs icons
 
   Time Report criteria list : criteria are now sorted by type (Tree, Custom Fields, Date)
