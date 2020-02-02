@@ -89,6 +89,10 @@ scripts/test_it.sh
 
 # Changelog
 
+* **V1.0.4**  **available_criteria_options** : sorted criteria + prefix by glyphs icons
+
+  Time Report criteria list : criteria are now sorted by type (Tree, Custom Fields, Date)
+
 * **V1.0.3**  Redmine V3.4.6 minimum, + UserCustomFields in TimeReport Criteria
 * **V1.0.2**  Enabled optional features provided in redmine_extended_queries plugin
 because these two plugins override the same views :
