@@ -235,7 +235,9 @@ class TimeReportQuery < Query
   def sql_for_issue_id_field(field, operator, value)
     case operator
     when "="
-      "#{TimeEntry.table_name}.issue_id = #{value.first.to_i}"
+      # Smile specific : manage drop down list filter
+      issue_ids = value.join(',')
+      "#{TimeEntry.table_name}.issue_id IN (#{issue_ids})"
     when "~"
       issue = Issue.where(:id => value.first.to_i).first
       if issue && (issue_ids = issue.self_and_descendants.pluck(:id)).any?
