@@ -1,5 +1,6 @@
 <%
   # Smile specific
+  # Same file as in redmine_xtended_queries plugin
   # RM V4.0.3 OK
   #
   # TESTED
@@ -64,6 +65,21 @@
 <%= check_box_tag 'query_is_for_all', 1, @query.project.nil?, :class => (User.current.admin? ? '' : 'disable-unless-private') %></p>
 
 <% unless params[:gantt] %>
+<%
+    ################
+    # Smile specific #797962 Time Entry Report Queries
+    if is_time_report_query
+-%>
+</div>
+
+<%= render :partial => 'queries/form_time_report', :locals => {:query => @query} %>
+
+<div class="tabular">
+<%
+    end
+    # END -- Smile specific #797962 Time Entry Report Queries
+    #######################
+-%>
 <fieldset id="options"><legend><%= l(:label_options) %></legend>
 <%
     ################
@@ -85,20 +101,6 @@
 -%>
 
 <%
-    ################
-    # Smile specific #267538 Demandes : Export Csv + Pdf, conversion en jours
-    # Smile specific : NEW HOURS BY DAY
-    if @query.respond_to?('hours_by_day')
--%>
-<p>
-  <label><%= l(:label_hours_by_day) %></label>
-  <label class="inline"><%= number_field_tag 'hours_by_day', @query.hours_by_day, in: 1...24, :size => 2, :maxlength => 2 %></label>
-</p>
-<%
-    end
-    # END -- Smile specific #267538 Demandes : Export Csv + Pdf, conversion en jours
-    #######################
-
     ################
     # Smile specific #267538 Demandes : Export Csv + Pdf, conversion en jours
     # Smile specific : NEW HOURS BY DAY
@@ -203,18 +205,6 @@
   end
 -%>
 
-<%
-  ################
-  # Smile specific : NEW OR FILTERS
-  if Query.respond_to?(:or_filters_provided?)
--%>
-<fieldset id="or-filters"><legend><%= "#{l(:label_filter_plural)} (#{l(:label_or)})" %></legend>
-<%= render :partial => 'queries/or_filters', :locals => {:query => query} %>
-<%
-  end
--%>
-</fieldset>
-
 <% unless params[:gantt] %>
 <%
     ################
@@ -255,12 +245,6 @@
 <legend><%= l(:field_column_names) %></legend>
 <%= render_query_columns_selection(query) %>
 <% end %>
-<%
-    else
-      # Smile specific #797962 Time Entry Report Queries
-      # Smile specific : ONLY for TIME REPORT QUERIES
--%>
-<%= render :partial => 'queries/form_time_report', :locals => {:query => @query} %>
 <%
     end
     # END -- Smile specific #797962 Time Entry Report Queries

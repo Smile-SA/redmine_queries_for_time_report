@@ -6,11 +6,11 @@
   # * #797962 Time Entry Report Queries
 -%>
   <fieldset id="options_time_report" class="collapsible collapsed">
-    <legend onclick="toggleFieldset(this);"><%= l(:label_options) %> (<%= l(:label_report) %>)</legend>
+    <legend onclick="toggleFieldset(this);"><%= l(:label_options) %> (<b><%= l(:label_report) %></b>)</legend>
     <div style="display: none;">
       <table>
         <tr>
-          <td class="field"><%= l(:label_criteria) %> (<%= l(:label_max_criteria, Query.max_criteria) %>)</td>
+          <td class="field"><b><%= l(:label_criteria) %></b> (<%= l(:label_max_criteria, Query.max_criteria) %>)</td>
           <td>
             <%= render_query_criteria_selection(query) %>
           </td>
@@ -22,6 +22,7 @@
         </tr>
 <%
       ################
+      # Smile specific #47664 Rendre la case "sans les sous-tâches" optionnelle
       # Smile specific : + debug
       if query.respond_to?(:debug) && query.debug
 -%>
@@ -32,6 +33,8 @@
         </tr>
 <%
       end
+      # END -- Smile specific #47664 Rendre la case "sans les sous-tâches" optionnelle
+      #######################
 -%>
       </table>
   </div>
