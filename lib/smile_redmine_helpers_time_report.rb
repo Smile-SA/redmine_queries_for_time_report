@@ -200,7 +200,7 @@ module Smile
               #
               # Add list and boolean custom fields as available criteria
               # Smile specific : add version custom fields + multiple custom fields
-              custom_fields.select {|cf| %w(list bool version).include?(cf.field_format)}.each do |cf|
+              custom_fields.select {|cf| %w(list bool version string).include?(cf.field_format)}.each do |cf|
                 available_criteria["cf_#{cf.id}"] = {:sql => cf.group_statement,
                                                      :joins => cf.join_for_order_statement,
                                                      :format => cf.field_format,
