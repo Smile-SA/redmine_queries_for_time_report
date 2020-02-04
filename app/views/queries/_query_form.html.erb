@@ -50,6 +50,7 @@
     legend_collapsed_class = " class=\"icon icon-collapsed\"".html_safe
   else
     legend_class = ''
+    legend_collapsed_class = ''
   end
 -%>
 <div id="query_form_with_buttons" class="hide-when-print">
@@ -70,7 +71,10 @@
   if Query.respond_to?(:or_filters_provided?)
 -%>
   <fieldset id="or-filters" class="collapsible <%= @query.new_record? ? "" : "collapsed" %>">
-    <legend onclick="toggleFieldset(this);"><%= "#{l(:label_filter_plural)} (#{l(:label_or)})" %></legend>
+<%
+  # Issue #31433 of RM.org for RM > 4.1
+-%>
+    <legend onclick="toggleFieldset(this);"<%= legend_class %>><%= "#{l(:label_filter_plural)} (#{l(:label_or)})" %></legend>
     <div style="<%= @query.new_record? ? "" : "display: none;" %>">
       <%= render :partial => 'queries/or_filters', :locals => {:query => @query} %>
     </div>

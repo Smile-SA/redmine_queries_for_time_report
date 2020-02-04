@@ -4,9 +4,16 @@
   #
   # ONLY for TIME REPORT QUERIES
   # * #797962 Time Entry Report Queries
+
+  # Issue #31433 of RM.org for RM > 4.1
+  if (Redmine::VERSION::MAJOR == 4 && Redmine::VERSION::MINOR >= 1) || Redmine::VERSION::MAJOR > 4
+    legend_class = " class=\"icon icon-#{ @query.new_record? ? "expended" : "collapsed" }\"".html_safe
+  else
+    legend_class = ''
+  end
 -%>
   <fieldset id="options_time_report" class="collapsible collapsed">
-    <legend onclick="toggleFieldset(this);"><%= l(:label_options) %> (<b><%= l(:label_report) %></b>)</legend>
+    <legend onclick="toggleFieldset(this);"<%= legend_class %>><%= l(:label_options) %> (<b><%= l(:label_report) %></b>)</legend>
     <div style="display: none;">
       <table>
         <tr>
