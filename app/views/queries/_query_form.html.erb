@@ -43,10 +43,22 @@
   #######################
 -%>
 
+<%
+  # Issue #31433 of RM.org for RM > 4.1
+  if (Redmine::VERSION::MAJOR == 4 && Redmine::VERSION::MINOR >= 1) || Redmine::VERSION::MAJOR > 4
+    legend_class = " class=\"icon icon-#{ @query.new_record? ? "expended" : "collapsed" }\""
+    legend_collapsed_class = " class=\"icon icon-collapsed\""
+  else
+    legend_class = ''
+  end
+-%>
 <div id="query_form_with_buttons" class="hide-when-print">
 <div id="query_form_content">
   <fieldset id="filters" class="collapsible <%= @query.new_record? ? "" : "collapsed" %>">
-    <legend onclick="toggleFieldset(this);"><%= l(:label_filter_plural) %></legend>
+<%
+  # Issue #31433 of RM.org for RM > 4.1
+-%>
+    <legend onclick="toggleFieldset(this);"<%= legend_class %>><%= l(:label_filter_plural) %></legend>
     <div style="<%= @query.new_record? ? "" : "display: none;" %>">
       <%= render :partial => 'queries/filters', :locals => {:query => @query} %>
     </div>
@@ -80,7 +92,10 @@
   #######################
 -%>
   <fieldset id="options" class="collapsible collapsed">
-    <legend onclick="toggleFieldset(this);"><%= l(:label_options) %></legend>
+<%
+  # Issue #31433 of RM.org for RM > 4.1
+-%>
+    <legend onclick="toggleFieldset(this);"<%= legend_collapsed_class %>><%= l(:label_options) %></legend>
     <div style="display: none;">
       <table>
 <%
