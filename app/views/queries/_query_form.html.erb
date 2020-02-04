@@ -46,8 +46,8 @@
 <%
   # Issue #31433 of RM.org for RM > 4.1
   if (Redmine::VERSION::MAJOR == 4 && Redmine::VERSION::MINOR >= 1) || Redmine::VERSION::MAJOR > 4
-    legend_class = " class=\"icon icon-#{ @query.new_record? ? "expended" : "collapsed" }\""
-    legend_collapsed_class = " class=\"icon icon-collapsed\""
+    legend_class = " class=\"icon icon-#{ @query.new_record? ? "expended" : "collapsed" }\"".html_safe
+    legend_collapsed_class = " class=\"icon icon-collapsed\"".html_safe
   else
     legend_class = ''
   end
