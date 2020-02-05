@@ -11,10 +11,16 @@
   else
     legend_class = ''
   end
+
+  if query.new_record?
+    options_div_style = ''
+  else
+    options_div_style = 'style="display: none;"'.html_safe
+  end
 -%>
   <fieldset id="options_time_report" class="collapsible <%= query.new_record? ? "" : "collapsed" %>">
     <legend onclick="toggleFieldset(this);"<%= legend_class %>><%= l(:label_options) %> (<b><%= l(:label_report) %></b>)</legend>
-    <div style="display: none;">
+    <div<%= options_div_style %>>
       <table>
         <tr>
           <td class="field"><b><%= l(:label_criteria) %></b> (<%= l(:label_max_criteria, Query.max_criteria) %>)</td>
