@@ -74,7 +74,7 @@
 <%
   # Issue #31433 of RM.org for RM > 4.1
 -%>
-    <legend onclick="toggleFieldset(this);"<%= legend_collapsed_class %>><%= "#{l(:label_filter_plural)} (#{l(:label_or)})" %></legend>
+    <legend onclick="toggleFieldset(this);"<%= legend_collapsed_class %> title="<%= l(:label_non_exclusive_filters) %>"><%= "#{l(:label_filter_plural)} (#{l(:label_or)})" %></legend>
     <div style="display: none;">
       <%= render :partial => 'queries/or_filters', :locals => {:query => @query} %>
     </div>

@@ -198,7 +198,7 @@
   # Smile specific : NEW OR FILTERS
   if Query.respond_to?(:or_filters_provided?)
 -%>
-<fieldset id="or-filters"><legend><%= "#{l(:label_filter_plural)} (#{l(:label_or)})" %></legend>
+<fieldset id="or-filters"><legend title="<%= l(:label_non_exclusive_filters) %>"><%= "#{l(:label_filter_plural)} (#{l(:label_or)})" %></legend>
 <%= render :partial => 'queries/or_filters', :locals => {:query => query} %>
 </fieldset>
 <%
