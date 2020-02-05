@@ -15,7 +15,7 @@
   if query.new_record?
     options_div_style = ''
   else
-    options_div_style = 'style="display: none;"'.html_safe
+    options_div_style = ' style="display: none;"'.html_safe
   end
 -%>
   <fieldset id="options_time_report" class="collapsible <%= query.new_record? ? "" : "collapsed" %>">
