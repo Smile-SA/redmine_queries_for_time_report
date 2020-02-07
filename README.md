@@ -89,7 +89,8 @@ scripts/test_it.sh
 
 # Changelog
 
-* **V1.0.7**  Enables **String Format** Custom Fields in Time Report criteria
+* **V1.3.8**  Enables **Enumeration** (Key/Value) Custom Fields in Time Report **criteria**
+* **V1.0.7**  Enables **String Format** Custom Fields in Time Report **criteria**
 * **V1.0.6**  Compatibility with RM V4.1+ #31433 of RM.org for RM > 4.1
 * **V1.0.5**  **criteria selection** at the beginning
 * **V1.0.4**  **available_criteria_options** : sorted criteria + prefix by glyphs icons
