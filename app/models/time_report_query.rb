@@ -107,42 +107,42 @@ class TimeReportQuery < Query
       cf_class = criteria[:custom_field].class
 
       if k == 'root'
-        criteria_order = 'F5'
-        criteria_label = l("label_with_children_symbol") + ' ' + l_or_humanize(criteria[:label])
+        option_order = 'F5'
+        option_label = l("label_with_children_symbol") + ' ' + l_or_humanize(criteria[:label])
       elsif k == 'parent'
-        criteria_order = 'F6'
-        criteria_label = l("label_with_children_symbol") + ' ' + l_or_humanize(criteria[:label])
+        option_order = 'F6'
+        option_label = l("label_with_children_symbol") + ' ' + l_or_humanize(criteria[:label])
       elsif k == 'issue'
-        criteria_order = 'F7'
-        criteria_label = l("label_with_children_symbol") + ' ' + l_or_humanize(criteria[:label])
+        option_order = 'F7'
+        option_label = l("label_with_children_symbol") + ' ' + l_or_humanize(criteria[:label])
       elsif  k == 'spent_on'
-        criteria_order = 'G'
-        criteria_label = l("label_calendar_icon") + ' ' + l_or_humanize(criteria[:label])
+        option_order = 'G'
+        option_label = l("label_calendar_icon") + ' ' + l_or_humanize(criteria[:label])
       elsif (cf_class == TimeEntryCustomField) || (cf_class == TimeEntryActivityCustomField)
-        criteria_order = 'H' # in first in custom fields
-        criteria_label = l(:label_tool_icon) + ' ' + l_or_humanize(criteria[:label])
+        option_order = 'H' # in first in custom fields
+        option_label = l(:label_tool_icon) + ' ' + l_or_humanize(criteria[:label])
       elsif cf_class == IssueCustomField
-        criteria_order = 'I'
-        criteria_label = l(:label_tool_icon) + ' ' + l("label_attribute_of_issue", :name => criteria[:label])
+        option_order = 'I'
+        option_label = l(:label_tool_icon) + ' ' + l("label_attribute_of_issue", :name => criteria[:label])
       elsif cf_class == ProjectCustomField
-        criteria_order = 'P'
-        criteria_label = l(:label_tool_icon) + ' ' + l("label_attribute_of_project", :name => criteria[:label])
+        option_order = 'P'
+        option_label = l(:label_tool_icon) + ' ' + l("label_attribute_of_project", :name => criteria[:label])
       elsif cf_class == UserCustomField
-        criteria_order = 'Q'
-        criteria_order = l(:label_user)[0]
-        criteria_label = l(:label_tool_icon) + ' ' + l("label_attribute_of_user", :name => criteria[:label])
+        option_order = 'Q'
+        option_order = l(:label_user)[0]
+        option_label = l(:label_tool_icon) + ' ' + l("label_attribute_of_user", :name => criteria[:label])
       else
-        criteria_order = nil
-        criteria_label = l_or_humanize(criteria[:label])
+        option_order = nil
+        option_label = l_or_humanize(criteria[:label])
       end
 
-      # Smile comment : criteria_order added to sort later
-      [criteria_label, k, criteria_order]
+      # Smile comment : option_order added to sort later
+      [option_label, k, option_order]
     }
 
     ################
     # Smile specific #245965 Rapport : critères, indication type champ personnalisé
-    self.class.sort_criteria_options!(@available_criteria_options)
+    self.class.sort_options_by_label_and_order!(@available_criteria_options)
 
     # remove last element used to sort
     @available_criteria_options = @available_criteria_options.collect{|k| [k[0], k[1]]}
@@ -213,27 +213,30 @@ class TimeReportQuery < Query
 
   # new method, RM 4.0.3 OK
   # Smile specific #245965 Rapport : critères, indication type champ personnalisé
-  def self.sort_criteria_options!(criteria_options)
-    criteria_options.sort!{|x, y|
-      criteria_order_x = x[2]
-      criteria_order_y = y[2]
+  # Smile specific : options = [[label, name, order]]
+  # Copied from redmine_smile_base plugin
+  def self.sort_options_by_label_and_order!(options)
+    # Smile specific : sort with label and order
+    options.sort!{|x, y|
+      option_order_x = x[2]
+      option_order_y = y[2]
 
-      if criteria_order_x && criteria_order_y
-        # 2 Custom field criteria
-        if criteria_order_x == criteria_order_y
-          # Same Custom field
+      if option_order_x && option_order_y
+        # [,, orderx], [,, ordery]
+        if option_order_x == option_order_y
+          # [labelx,, orderx], [labelx,, orderx]
           x[0] <=> y[0]
         else
-          criteria_order_x <=> criteria_order_y
+          option_order_x <=> option_order_y
         end
-      elsif criteria_order_x
-        # first Custom field criteria => first at the end
+      elsif option_order_x
+        # [labelx,, orderx], [nil,, ordery] => at the end
         1
-      elsif criteria_order_y
-        # second Custom field criteria => at the begining
+      elsif option_order_y
+        # [labelx,, orderx], [labelx,, orderx] normal order, not sorted
         -1
       else
-        # normal order
+        # x[0] <=> y[0] normal order
         x[0] <=> y[0]
       end
     }
