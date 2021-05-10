@@ -5,8 +5,8 @@
   ################
   # Smile specific #797962 Time Entry Report Queries
   # Smile specific : query params different if time entries or time report
-  query_params = request.query_parameters
-  query_params_for_report = query_params
+  query_params = request.query_parameters.clone
+  query_params_for_report = query_params.clone
   if action_name == 'index'
     query_params_for_report = query_params_for_report.delete_if { |k, v| k == 'query_id' }
   else
