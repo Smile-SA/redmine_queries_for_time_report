@@ -7,8 +7,8 @@
 
 #require 'active_support/concern' #Rails 3
 
-module Smile
-  module Controllers
+module Controllers
+  module SmileControllersTimelog
     module TimelogOverride
       module Query4TimeReport
         def self.prepended(base)
@@ -88,5 +88,5 @@ module Smile
         end
       end # module Query4TimeReport
     end # module TimelogOverride
-  end # module Controllers
-end # module Smile
+  end # module SmileControllersTimelog
+end # module Controllers

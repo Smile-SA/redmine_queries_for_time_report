@@ -5,8 +5,8 @@
 
 #require 'active_support/concern' #Rails 3
 
-module Smile
-  module Models
+module Models
+  module SmileModelsQuery
     module QueryOverride
       #********************
       # 1/ Query4TimeReport
@@ -116,5 +116,5 @@ module Smile
         end
       end # module Query4TimeReport
     end # module QueryOverride
-  end # module Models
-end # module Smile
+  end # module SmileModelsQuery
+end # module Models

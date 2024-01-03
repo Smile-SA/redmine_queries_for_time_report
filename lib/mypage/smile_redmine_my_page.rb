@@ -5,8 +5,8 @@
 
 require_dependency 'redmine/my_page'
 
-module Redmine
-  module MyPage
+module MyPage
+  module SmileRedmineMyPage
     #********************
     # 1/ Query4TimeReport
     module Query4TimeReport
@@ -92,7 +92,7 @@ module Redmine
 
         smile_class_methods = base.methods.select{|m|
             my_page_queries_class_methods.include?(m) &&
-              base.method(m).source_location.first =~ SmileTools.regex_path_in_plugin('lib/smile_redmine_my_page', :redmine_queries_for_time_report)
+              base.method(m).source_location.first =~ SmileTools.regex_path_in_plugin('lib/mypage/smile_redmine_my_page', :redmine_queries_for_time_report)
           }
 
         missing_class_methods = my_page_queries_class_methods.select{|m|
@@ -132,7 +132,7 @@ module Redmine
         def blocks_with_time_report_query
           return @@blocks if defined?(@@blocks)
 
-          @@blocks = CORE_BLOCKS.merge(additional_blocks).freeze
+          @@blocks =Redmine::MyPage::CORE_BLOCKS.merge(additional_blocks).freeze
           @@blocks
         end
 
@@ -152,7 +152,7 @@ module Redmine
               name.end_with?('_query_selection') ||
               # Core blocks partials ignored : plugins overrides partial
               (name == 'issues') ||
-              CORE_BLOCKS.keys.include?(name)
+              Redmine::MyPage::CORE_BLOCKS.keys.include?(name)
             )
               h[name] = {:label => name.to_sym, :partial => "my/blocks/#{name}"}
             else
@@ -168,4 +168,4 @@ module Redmine
       end
     end # module Query4TimeReport
   end # module MyPage
-end # module Redmine
+end # module SmileRedmineMyPage

@@ -9,11 +9,11 @@
 # - #270172: JournalQuery : Filtres sur les champs
 #   2015
 
-# module Smile::Helpers::QueriesOverride
+# module Helpers::Helpers::QueriesOverride
 # - 1/ module ::Query4TimeReport
 
-module Smile
-  module Helpers
+module Helpers
+  module SmileHelpersQueries
     module QueriesOverride
       #********************
       # 1/ Query4TimeReport
@@ -140,5 +140,5 @@ module Smile
         end # def self.prepended
       end # module Query4TimeReport
     end # module QueriesOverride
-  end # module Helpers
-end # module Smile
+  end # module SmileHelpersQueries
+end # module Helpers

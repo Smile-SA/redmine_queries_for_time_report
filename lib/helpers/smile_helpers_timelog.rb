@@ -6,8 +6,8 @@
 #      #342764 Redmine time report : option to show previous time entries total
 #      #408972 Optimisation : Rapport temps passé, cache criteria values
 
-module Smile
-  module Helpers
+module Helpers
+  module SmileHelpersTimelog
     module TimelogOverride
       #********************
       # 1/ Query4TimeReport
@@ -79,5 +79,5 @@ module Smile
         end # def self.extended
       end # module Query4TimeReport
     end # module TimelogOverride
-  end # module Helpers
-end # module Smile
+  end # module SmileHelpersTimelog
+end # module Helpers

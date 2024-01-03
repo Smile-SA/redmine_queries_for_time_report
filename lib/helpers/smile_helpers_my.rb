@@ -1,7 +1,7 @@
 require_dependency "my_helper"
 
-module Smile
-  module Helpers
+module Helpers
+  module SmileHelpersMy
     module MyOverride
       module Query4TimeReport
         def self.prepended(base)

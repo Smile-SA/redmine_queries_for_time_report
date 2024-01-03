@@ -13,7 +13,7 @@ plugin_name = :redmine_queries_for_time_report
 plugin_root = File.dirname(__FILE__)
 
 # lib/not_reloaded
-require plugin_root + '/lib/not_reloaded/smile_tools'
+require plugin_root + '/lib/smile_tools'
 
 Redmine::Plugin.register plugin_name do
   ########################
@@ -71,7 +71,7 @@ end
 ###############
 # 5/ to_prepare
 # Executed after Rails initialization
-rails_dispatcher.to_prepare do
+rails_dispatcher.after_initialize do
   Rails.logger.info "o=>"
   Rails.logger.info "o=>\\__ #{plugin_name} V#{plugin_version}"
 
@@ -90,9 +90,9 @@ rails_dispatcher.to_prepare do
   # but with primary loaded source code
   required = [
     # lib/
-    '/lib/smile_redmine_my_page',
-    '/lib/smile_redmine_helpers_time_report',
-    '/lib/string_format_field_format_patch',
+    '/lib/mypage/smile_redmine_my_page',
+    '/lib/helpers/smile_redmine_helpers_time_report',
+    '/lib/redmine/field_format/string_format',
 
     # lib/controllers
     '/lib/controllers/smile_controllers_timelog',
@@ -119,7 +119,7 @@ rails_dispatcher.to_prepare do
 
     # Folders whose contents should be reloaded, NOT including sub-folders
 
-#    ActiveSupport::Dependencies.autoload_once_paths.reject!{|x| x =~ /^#{Regexp.escape(plugin_root)}/}
+  #  ActiveSupport::Dependencies.autoload_once_paths.reject!{|x| x =~ /^#{Regexp.escape(plugin_root)}/}
 
     autoload_plugin_paths = ['/lib/controllers', '/lib/helpers', '/lib/models']
 
@@ -146,31 +146,31 @@ rails_dispatcher.to_prepare do
 
   ##############
   # 6/ Overrides
-  require_dependency 'lib/redmine/my_page'
-  prepend_in(Redmine::MyPage, Redmine::MyPage::Query4TimeReport)
+  require_dependency plugin_root + '/../../lib/redmine/my_page'
+ prepend_in(Redmine::MyPage, MyPage::SmileRedmineMyPage::Query4TimeReport)
 
   prepend_in(Redmine::Helpers::TimeReport,
-      Smile::RedmineOverride::HelpersOverride::TimeReportOverride::NewCriteria
+    Helpers::SmileRedmineHelpersTimeReport::HelpersOverride::TimeReportOverride::NewCriteria
     )
 
 
   #***************************
   # **** 6.1/ Controllers ****
   #Rails.logger.info "o=>----- CONTROLLERS"
-  prepend_in(TimelogController, Smile::Controllers::TimelogOverride::Query4TimeReport)
+  prepend_in(TimelogController, Controllers::SmileControllersTimelog::TimelogOverride::Query4TimeReport)
 
 
   #***********************
   # **** 6.2/ Helpers ****
   Rails.logger.info "o=>----- HELPERS"
-  prepend_in(TimelogHelper, Smile::Helpers::TimelogOverride::Query4TimeReport)
-  prepend_in(MyHelper, Smile::Helpers::MyOverride::Query4TimeReport)
-  prepend_in(QueriesHelper, Smile::Helpers::QueriesOverride::Query4TimeReport)
+  prepend_in(TimelogHelper, Helpers::SmileHelpersTimelog::TimelogOverride::Query4TimeReport)
+  prepend_in(MyHelper, Helpers::SmileHelpersMy::MyOverride::Query4TimeReport)
+  prepend_in(QueriesHelper, Helpers::SmileHelpersQueries::QueriesOverride::Query4TimeReport)
 
   #**********************
   # **** 6.3/ Models ****
   Rails.logger.info "o=>----- MODELS"
-  prepend_in(Query, Smile::Models::QueryOverride::Query4TimeReport)
+  prepend_in(Query, Models::SmileModelsQuery::QueryOverride::Query4TimeReport)
 
 
   # keep traces if classes / modules are reloaded

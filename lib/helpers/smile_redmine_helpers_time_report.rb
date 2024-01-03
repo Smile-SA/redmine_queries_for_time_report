@@ -6,8 +6,8 @@
 #
 # * #797962 Time Entry Report Queries
 
-module Smile
-  module RedmineOverride
+module Helpers
+  module SmileRedmineHelpersTimeReport
     module HelpersOverride
       module TimeReportOverride
         #***************
@@ -216,4 +216,4 @@ module Smile
       end # module TimeReportOverride
     end # module HelpersOverride
   end # module RedmineOverride
-end # module Smile
+end # module SmileRedmineHelpersTimeReport

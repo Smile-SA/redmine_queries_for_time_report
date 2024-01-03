@@ -5,7 +5,7 @@ module Redmine
     Rails.logger.info "o=>adding group_statement to StringFormat"
 
     # Plugin : new class for format
-    class StringFormat
+    class StringFormat < Unbounded
       def group_statement(custom_field)
         order_statement(custom_field)
       end
