@@ -147,7 +147,7 @@ rails_dispatcher.after_initialize do
   ##############
   # 6/ Overrides
   require_dependency plugin_root + '/../../lib/redmine/my_page'
- prepend_in(Redmine::MyPage, MyPage::SmileRedmineMyPage::Query4TimeReport)
+ prepend_in(Redmine::MyPage, Mypage::SmileRedmineMyPage::Query4TimeReport)
 
   prepend_in(Redmine::Helpers::TimeReport,
     Helpers::SmileRedmineHelpersTimeReport::HelpersOverride::TimeReportOverride::NewCriteria

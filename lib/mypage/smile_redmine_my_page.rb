@@ -5,7 +5,7 @@
 
 require_dependency 'redmine/my_page'
 
-module MyPage
+module Mypage
   module SmileRedmineMyPage
     #********************
     # 1/ Query4TimeReport
