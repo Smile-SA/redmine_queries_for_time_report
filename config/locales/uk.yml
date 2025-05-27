@@ -5,3 +5,7 @@ uk:
   label_criteria: Criteria
   label_time_report_query_plural: Time entry Reports
   label_max_criteria: "%{count} maximum"
+  label_time_icon: 🕝
+  label_tool_icon: 🔧
+  label_calendar_icon: 🗓
+  label_with_children_symbol: ⊨

@@ -5,3 +5,7 @@ fr:
   label_criteria: Critères
   label_time_report_query_plural: Rapports du temps passé
   label_max_criteria: "%{count} maximum"
+  label_time_icon: 🕝
+  label_tool_icon: 🔧
+  label_calendar_icon: 🗓
+  label_with_children_symbol: ⊨

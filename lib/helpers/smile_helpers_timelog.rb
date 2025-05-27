@@ -30,7 +30,11 @@ module Helpers
               # Smile specific : params[:criteria] -> @query.criteria, columns is the periods interval
               # Smile specific : params[:columns] -> @query.period, columns is the periods interval
               # Smile specific : scope (= time_entry_scope) -> @scope, used in My Page queries
-              @report = Redmine::Helpers::TimeReport.new(@project, @issue, @query.criteria, @query.period, @scope)
+              begin
+                @report = Redmine::Helpers::TimeReport.new(@project, @issue, @query.criteria, @query.period, @scope)
+              rescue
+                @report = Redmine::Helpers::TimeReport.new(@project, @query.criteria, @query.period, @scope)
+              end
               # Smile comment : NATIVE source code
               # @report = Redmine::Helpers::TimeReport.new(@project, @issue, params[:criteria], params[:columns], scope)
             end
