@@ -300,17 +300,17 @@ $(document).ready(function(){
 -%>
 
 <p class="buttons">
-  <%= link_to_function l(:button_apply), '$("#query_form").submit()', :class => 'icon icon-checked' %>
-  <%= link_to l(:button_clear), { :set_filter => 1, :sort => '', :project_id => @project }, :class => 'icon icon-reload'  %>
+  <%= link_to_function (respond_to?(:sprite_icon) ? sprite_icon('checked', l(:button_apply)) : l(:button_apply)), '$("#query_form").submit()', :class => 'icon icon-checked' %>
+  <%= link_to (respond_to?(:sprite_icon) ? sprite_icon('clear', l(:button_clear)) : l(:button_clear)), { :set_filter => 1, :sort => '', :project_id => @project }, :class => 'icon icon-reload'  %>
   <% if @query.new_record? %>
     <% if User.current.allowed_to?(:save_queries, @project, :global => true) %>
-      <%= link_to_function l(:button_save),
+      <%= link_to_function (respond_to?(:sprite_icon) ? sprite_icon('save', l(:button_save)) : l(:button_save)),
                            "$('#query_type').prop('disabled',false);$('#query_form').attr('action', '#{ @project ? new_project_query_path(@project) : new_query_path }').submit()",
                            :class => 'icon icon-save' %>
     <% end %>
   <% else %>
     <% if @query.editable_by?(User.current) %>
-      <%= link_to l(:button_edit), edit_query_path(@query), :class => 'icon icon-edit' %>
+      <%= link_to (respond_to?(:sprite_icon) ? sprite_icon('edit', l(:button_edit)) : l(:button_edit)), edit_query_path(@query), :class => 'icon icon-edit' %>
       <%= delete_link query_path(@query) %>
     <% end %>
   <% end %>
